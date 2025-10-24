@@ -1,0 +1,28 @@
+name: OpenAI Codex Integration
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  codex_review:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Run Codex Analysis
+        uses: openai/codex-action@v1
+        with:
+          openai_api_key: ${{ secrets.OPENAI_API_KEY }}
+          model: gpt-4o-mini
+          prompt: |
+            Analyze the code changes in this commit or pull request.
+            Detect potential bugs, suggest improvements, and explain unclear logic.
