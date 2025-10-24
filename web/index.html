@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EternaDream Control Nexus</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <header class="app-header">
+      <div class="brand">
+        <img
+          src="../assets/logo_or_rouge_no_text_transparent_300dpi.png"
+          alt="Logo EternaDream"
+          class="brand__logo"
+        />
+        <div class="brand__copy">
+          <p class="brand__eyebrow">Eterna 3.0 Ultimate ECX Partner</p>
+          <h1 class="brand__title">Control Nexus Companion</h1>
+        </div>
+      </div>
+      <nav class="mode-switcher" aria-label="Sélection du concept d'interface">
+        <button class="mode-switcher__btn is-active" data-target="concept-a">
+          Performance Command Center
+        </button>
+        <button class="mode-switcher__btn" data-target="concept-b">
+          Showroom Companion
+        </button>
+        <button class="mode-switcher__btn" data-target="concept-c">
+          Enterprise Service Portal
+        </button>
+      </nav>
+      <div class="status-chips">
+        <span class="chip chip--balanced">Profil actif : Balanced</span>
+        <span class="chip chip--secure">TPM 2.0</span>
+        <span class="chip chip--network">Dual 10 GbE</span>
+      </div>
+    </header>
+
+    <main>
+      <section id="concept-a" class="concept concept--active" aria-labelledby="concept-a-title">
+        <div class="concept__hero">
+          <div>
+            <h2 id="concept-a-title">Performance Command Center</h2>
+            <p>
+              Maîtrisez chaque watt du Ryzen 9 9950X et du RTX 5090 grâce à des
+              profils dynamiques, une visualisation thermique granulaire et un
+              éditeur d'orchestration complet.
+            </p>
+            <div class="hero-actions">
+              <button class="btn btn--primary">Lancer le mode Turbo</button>
+              <button class="btn btn--ghost">Synchroniser les zones RGB</button>
+            </div>
+          </div>
+          <aside class="concept__hero-aside">
+            <div class="stat-card">
+              <span class="stat-card__label">Température CPU</span>
+              <span class="stat-card__value">68°C</span>
+              <span class="stat-card__meta">Silent target &lt; 80°C</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-card__label">Charge GPU</span>
+              <span class="stat-card__value">74%</span>
+              <span class="stat-card__meta">RTX 5090 Neural Shader actif</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-card__label">Acoustique</span>
+              <span class="stat-card__value">29 dBA</span>
+              <span class="stat-card__meta">Compatible Silent Mode</span>
+            </div>
+          </aside>
+        </div>
+
+        <div class="grid">
+          <article class="panel panel--wide">
+            <header class="panel__header">
+              <h3>Orchestrateur de profils</h3>
+              <button class="chip chip--action">Créer un preset</button>
+            </header>
+            <p>
+              Ajustez les courbes ventilateur/pompe liées au circuit vapeur
+              double chambre et sauvegardez des profils contextualisés pour vos
+              créneaux streaming, IA ou démonstrations partenaires.
+            </p>
+            <div class="curve-editor">
+              <div class="curve-editor__plot" role="img" aria-label="Graphique des courbes de ventilation"></div>
+              <ul class="curve-editor__legend">
+                <li><span class="legend-dot legend-dot--cpu"></span>CPU Vapor Loop</li>
+                <li><span class="legend-dot legend-dot--gpu"></span>GPU Radiateur 280 mm</li>
+                <li><span class="legend-dot legend-dot--psu"></span>PSU Zero-RPM</li>
+              </ul>
+            </div>
+          </article>
+
+          <article class="panel">
+            <header class="panel__header">
+              <h3>Surveillance électrique</h3>
+              <span class="chip chip--power">Shunt 1% accuracy</span>
+            </header>
+            <p>
+              Analysez la consommation en direct, anticipez les pics et déclenchez
+              des alertes sur les protections 2 kV intégrées.
+            </p>
+            <div class="power-meter" role="img" aria-label="Jauge de consommation électrique"></div>
+          </article>
+
+          <article class="panel">
+            <header class="panel__header">
+              <h3>Mises à jour OTA</h3>
+              <button class="chip chip--action">Planifier</button>
+            </header>
+            <ul class="timeline">
+              <li>
+                <span class="timeline__title">BIOS X780E 2.04</span>
+                <span class="timeline__meta">Installé il y a 2 jours</span>
+              </li>
+              <li>
+                <span class="timeline__title">vBIOS RTX 5090 1.3</span>
+                <span class="timeline__meta">Disponible</span>
+              </li>
+              <li>
+                <span class="timeline__title">Firmware contrôleur RGB</span>
+                <span class="timeline__meta">Synchronisé</span>
+              </li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section id="concept-b" class="concept" aria-labelledby="concept-b-title">
+        <div class="concept__hero">
+          <div>
+            <h2 id="concept-b-title">Immersive Showroom Companion</h2>
+            <p>
+              Offrez une expérience sensorielle haut de gamme mettant en scène la
+              finition titane 12 L, les ports USB4 frontaux et le service
+              concierge EternaDream.
+            </p>
+            <div class="hero-actions">
+              <button class="btn btn--primary">Démarrer la visite guidée</button>
+              <button class="btn btn--ghost">Mode hors ligne</button>
+            </div>
+          </div>
+          <aside class="concept__hero-aside">
+            <div class="stat-card">
+              <span class="stat-card__label">Scènes luminosité</span>
+              <span class="stat-card__value">3</span>
+              <span class="stat-card__meta">Silent Sapphire, Turbo Ember, Signature</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-card__label">Assistant</span>
+              <span class="stat-card__value">Concierge AI</span>
+              <span class="stat-card__meta">Guidage bilingue</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-card__label">Cache</span>
+              <span class="stat-card__value">Offline Ready</span>
+              <span class="stat-card__meta">Parfait pop-up store</span>
+            </div>
+          </aside>
+        </div>
+
+        <div class="grid">
+          <article class="panel panel--wide">
+            <header class="panel__header">
+              <h3>Explorateur de design</h3>
+              <span class="chip chip--luxury">Alliage titane</span>
+            </header>
+            <p>
+              Visualisez la coque titane, les barres RGB quadrizones et les zones
+              d'accent crimson inspirées du logo EternaDream.
+            </p>
+            <div class="showroom-view" role="img" aria-label="Maquette 3D interactive du châssis"></div>
+          </article>
+
+          <article class="panel">
+            <header class="panel__header">
+              <h3>Modules de démonstration</h3>
+            </header>
+            <ul class="spec-list">
+              <li><span>CPU :</span> Ryzen 9 9950X — narration IA temps réel</li>
+              <li><span>GPU :</span> RTX 5090 — rendu neural 8K</li>
+              <li><span>Connectivité :</span> Wi-Fi 7 + dual 10 GbE</li>
+              <li><span>Service :</span> Garantie 5 ans sur site</li>
+            </ul>
+          </article>
+
+          <article class="panel">
+            <header class="panel__header">
+              <h3>Personnalisation partenaire</h3>
+            </header>
+            <p>
+              Ajoutez des overlays co-brandés tout en conservant le logo EternaDream
+              original. Planifiez les scènes d'éclairage pour vos événements.
+            </p>
+            <button class="btn btn--secondary">Téléverser un thème</button>
+          </article>
+        </div>
+      </section>
+
+      <section id="concept-c" class="concept" aria-labelledby="concept-c-title">
+        <div class="concept__hero">
+          <div>
+            <h2 id="concept-c-title">Enterprise Service Portal</h2>
+            <p>
+              Supervisez vos flottes, automatisez les mises à jour OTA et accélérez
+              les RMA grâce à l'écosystème sécurisé TPM 2.0 et aux capteurs
+              d'intrusion.
+            </p>
+            <div class="hero-actions">
+              <button class="btn btn--primary">Ouvrir la console MQTT</button>
+              <button class="btn btn--ghost">Exporter les métriques</button>
+            </div>
+          </div>
+          <aside class="concept__hero-aside">
+            <div class="stat-card">
+              <span class="stat-card__label">Systèmes actifs</span>
+              <span class="stat-card__value">128</span>
+              <span class="stat-card__meta">Contrats partenaires</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-card__label">SLA</span>
+              <span class="stat-card__value">&lt; 48h</span>
+              <span class="stat-card__meta">Réparations sur site</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-card__label">Alertes sécurité</span>
+              <span class="stat-card__value">3</span>
+              <span class="stat-card__meta">Intrusions châssis</span>
+            </div>
+          </aside>
+        </div>
+
+        <div class="grid">
+          <article class="panel panel--wide">
+            <header class="panel__header">
+              <h3>Vue Fleet</h3>
+              <span class="chip chip--secure">TPM intégrité</span>
+            </header>
+            <p>
+              Carte dynamique des systèmes avec statut firmware, capteurs d'intrusion
+              et état du module TPM 2.0.
+            </p>
+            <div class="fleet-map" role="img" aria-label="Carte de flotte"></div>
+          </article>
+
+          <article class="panel">
+            <header class="panel__header">
+              <h3>Playbooks automations</h3>
+              <button class="chip chip--action">Créer</button>
+            </header>
+            <p>
+              Créez des scénarios pour pousser des BIOS, planifier la maintenance
+              du TIM métal liquide ou ajuster les budgets énergétiques.
+            </p>
+            <div class="playbook-list">
+              <div class="playbook">
+                <h4>Maintenance trimestrielle</h4>
+                <p>Rappel service TIM + validation acoustique Silent &lt; 32 dBA.</p>
+              </div>
+              <div class="playbook">
+                <h4>Surge Watch</h4>
+                <p>Analyse des journaux de protection 2 kV et ticket automatique.</p>
+              </div>
+            </div>
+          </article>
+
+          <article class="panel">
+            <header class="panel__header">
+              <h3>Concierge support</h3>
+            </header>
+            <p>
+              Assistant IA connecté aux télémétries CPU/GPU, au suivi PSU 1% et aux
+              informations réseau Wi-Fi 7 / 10 GbE.
+            </p>
+            <button class="btn btn--secondary">Ouvrir une session</button>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="app-footer">
+      <p>
+        © EternaDream – Données techniques issues de l'Eterna 3.0 Ultimate ECX
+        Partner. Préparez-vous à impressionner vos clients avec une expérience
+        de contrôle haut de gamme.
+      </p>
+    </footer>
+
+    <script src="app.js"></script>
+  </body>
+</html>
