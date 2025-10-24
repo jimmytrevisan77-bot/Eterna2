@@ -9,20 +9,30 @@ on:
       - main
 
 permissions:
-  contents: read
+  contents: write
+  pull-requests: write
 
 jobs:
   codex_review:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Run Codex Analysis
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Codex Action
+        run: npm install -g "@openai/codex-responses-api-proxy@latest"
+
+      - name: Run OpenAI Codex Review
         uses: openai/codex-action@v1
         with:
-          openai_api_key: ${{ secrets.OPENAI_API_KEY }}
+          openai-api-key: ${{ secrets.OPENAI_API_KEY }}
           model: gpt-4o-mini
           prompt: |
-            Analyze the code changes in this commit or pull request.
-            Detect potential bugs, suggest improvements, and explain unclear logic.
+            Review this code update.
+            Highlight potential bugs, unclear logic, and suggest improvements.
+            Respond in Markdown format with explanations.
