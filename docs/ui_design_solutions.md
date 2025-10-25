@@ -2,6 +2,8 @@
 
 This document outlines three complete interface solutions for the companion application requested for the Eterna 3.0 Ultimate ECX Partner system. Each concept is grounded in the official hardware specification and tailored to different partner priorities.
 
+> **Mise à jour v3.1 – Implémentation Windows** : le dépôt fournit désormais une application WPF native reproduisant le cockpit "Self-Coding & Autonomy" et intégrant la roadmap "Full Stack Local IA" (10 modules manquants, objectifs détaillés, bibliothèques GitHub). Les sections suivantes restent valables comme guide UX global ; la réalisation concrète côté Windows se concentre aujourd'hui sur la zone autonomie décrite dans ce document.
+
 ## Shared Design System Principles
 - **Branding**: Crimson-and-gold palette inspired by the titanium chassis accents and EternaDream logo. Typography pairs a bold geometric display font for headings with a highly legible sans-serif for data tables.
 - **Layout Grid**: 12-column responsive grid with modular cards and contextual drawers for quick actions.

@@ -1,30 +1,41 @@
-# EternaDream Control Nexus Prototype
+# EternaDream Control Nexus — Application Windows
 
-Prototype d'application pour le système **Eterna 3.0 Ultimate ECX Partner**. Ce dépôt contient :
+Cette version du projet matérialise le cockpit **Eterna 3.1 Self-Coding & Autonomy** sous la forme d'une application **WPF** native pour Windows. Elle s'appuie sur les spécifications `specs/Eterna_3.0_Ultimate_ECX_Partner_Specs.txt` et expose l'intégralité de la roadmap "Full Stack Local IA" v3.1 demandée.
 
-- Les spécifications produit de référence (`specs/Eterna_3.0_Ultimate_ECX_Partner_Specs.txt`).
-- Trois propositions d'interfaces complètes détaillées dans `docs/ui_design_solutions.md`.
-- Une maquette interactive statique située dans le dossier `web/` permettant de parcourir les quatre concepts d'interface.
-- Un module "Self-Coding & Autonomy" simulant la boucle de sauvegarde, validation et sandbox décrite pour Eterna 3.0.
-- Un tableau de bord "Full Stack Local IA v3.1" détaillant les 10 modules stratégiques manquants (mémoire, NLU, émotions, PC,
-  sécurité, e-commerce, etc.).
+## Contenu du dépôt
 
-## Utilisation
+- `Eterna.Desktop/` : projet WPF (.NET 7) fournissant l'application Windows.
+- `docs/ui_design_solutions.md` : dossier de conception décrivant les logiques d'écran et les parcours associés.
+- `specs/Eterna_3.0_Ultimate_ECX_Partner_Specs.txt` : fiche technique complète servant de base fonctionnelle.
 
-1. Placer le fichier officiel du logo `logo_or_rouge_no_text_transparent_300dpi.png` dans le dossier `assets/` sans le modifier.
-2. Ouvrir `web/index.html` dans un navigateur moderne pour explorer les concepts.
-3. Lire `docs/ui_design_solutions.md` pour comprendre les parcours utilisateurs, l'architecture de navigation et les composants clés.
+## Fonctionnalités clés
 
-## Technologies
+- Tableau de bord principal du module **Self-Coding & Autonomy** : backups chiffrés, files de changements, journal d'autonomie, watcher interne et adaptation émotionnelle.
+- **Liste exhaustive des 10 modules manquants v3.1** avec objectifs, priorités, impacts et bibliothèques GitHub associées, directement intégrée à l'expérience.
+- Synthèse du protocole d'auto-modification (backups, validations, sandbox, auto-test, rollback) affichée dans l'application.
+- Génération de backups simulés et mise à jour des journaux afin de tester l'orchestration locale.
 
-- HTML5 et CSS3 responsifs, basés sur un système de grille 12 colonnes.
-- JavaScript minimal pour gérer le changement de concept et l'accessibilité.
-- Palette de couleurs et typographies alignées sur l'identité EternaDream.
+## Prérequis
+
+- Windows 10 ou supérieur avec le **.NET SDK 7.0** (ou ultérieur) et le workload `Desktop development with C#` (Visual Studio) ou `dotnet-wpf` (CLI).
+
+## Compilation et exécution
+
+```bash
+cd Eterna.Desktop
+ dotnet build
+ dotnet run
+```
+
+La commande `dotnet run` ouvrira la fenêtre "Eterna 3.1 — Cockpit d'autonomie locale". Le dépôt ne contient aucune dépendance externe : toutes les données affichées sont simulées côté client.
+
+## Ressources visuelles
+
+Le logo officiel `logo_or_rouge_no_text_transparent_300dpi.png` doit être ajouté dans un dossier `assets/` si vous souhaitez l'afficher dans l'application. **Ne le modifiez jamais** conformément aux directives partenaires.
 
 ## Prochaines étapes suggérées
 
-- Ajouter des visualisations réelles en s'appuyant sur les télémétries (shunt PSU, capteurs thermiques, MQTT).
-- Connecter la maquette à un backend simulé pour démontrer OTA, RMA et analytics.
-- Préparer des exports design (Figma) et composants réutilisables (Storybook) pour accélérer l'industrialisation.
-- Prototyper l'orchestrateur d'auto-codage (FastAPI + watcher Python) et brancher l'UI Self-Coding sur des APIs locales.
-- Prioriser la livraison des modules v3.1 selon la roadmap (mémoire long terme, NLU, sécurité biométrique, autonomie multi-agents).
+- Brancher les commandes de backup, validation et watchers à un backend FastAPI sandboxé.
+- Implémenter la mémoire long terme locale (ChromaDB / FAISS) et les contrôles PC (psutil, PyAutoGUI) via interopérabilité.
+- Ajouter la synchronisation iOS (FastAPI WebSocket + SwiftNIO) et renforcer la sécurité biométrique.
+- Étendre les vues WPF vers un système multi-fenêtres (Performance Command Center, Showroom, Fleet Portal).
