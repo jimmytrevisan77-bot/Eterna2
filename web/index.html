@@ -35,6 +35,9 @@
         <button class="mode-switcher__btn" data-target="concept-c">
           Enterprise Service Portal
         </button>
+        <button class="mode-switcher__btn" data-target="concept-d">
+          Self-Coding & Autonomy
+        </button>
       </nav>
       <div class="status-chips">
         <span class="chip chip--balanced" data-active-profile>Profil actif : Balanced</span>
@@ -408,6 +411,170 @@
               Ouvrir une session
             </button>
             <ul class="support-log" data-support-log></ul>
+          </article>
+        </div>
+      </section>
+
+      <section id="concept-d" class="concept" aria-labelledby="concept-d-title">
+        <div class="concept__hero">
+          <div>
+            <h2 id="concept-d-title">Self-Coding &amp; Autonomy Module</h2>
+            <p>
+              Orchestration locale des capacités d’auto-développement d’Eterna :
+              backups complets avant chaque patch, validation sécurisée des
+              modifications sensibles et sandbox isolée pour tester les modules
+              générés par l’IA partenaire.
+            </p>
+            <div class="hero-actions">
+              <button class="btn btn--primary" data-run-backup>
+                Déclencher un backup total
+              </button>
+              <button class="btn btn--ghost" data-toggle-validation>
+                Validation manuelle activée
+              </button>
+              <button class="btn btn--ghost" data-run-sandbox>
+                Auto-test sandbox
+              </button>
+            </div>
+            <div class="autonomy-cycle" data-cycle-steps>
+              <div class="autonomy-cycle__step is-active" data-step="observation">
+                <span>Observation</span>
+                <small>Analyse du code et des usages</small>
+              </div>
+              <div class="autonomy-cycle__step" data-step="proposition">
+                <span>Proposition</span>
+                <small>Plans de correctifs générés</small>
+              </div>
+              <div class="autonomy-cycle__step" data-step="validation">
+                <span>Validation</span>
+                <small>Double-check manuel ou vocal</small>
+              </div>
+              <div class="autonomy-cycle__step" data-step="application">
+                <span>Application</span>
+                <small>Déploiement local contrôlé</small>
+              </div>
+              <div class="autonomy-cycle__step" data-step="verification">
+                <span>Vérification</span>
+                <small>Auto-test post-update</small>
+              </div>
+              <div class="autonomy-cycle__step" data-step="memorisation">
+                <span>Mémorisation</span>
+                <small>Journalisation &amp; apprentissage</small>
+              </div>
+            </div>
+          </div>
+          <aside class="concept__hero-aside">
+            <div class="stat-card">
+              <span class="stat-card__label">Dernier backup</span>
+              <span class="stat-card__value" data-last-backup>12:30</span>
+              <span class="stat-card__meta" data-last-backup-path>
+                Stocké dans Eterna\Backups\2024-04-19_1230
+              </span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-card__label">Mode de validation</span>
+              <span class="stat-card__value" data-validation-state>Manuelle</span>
+              <span class="stat-card__meta">Confirmation requise pour les patchs sensibles</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-card__label">Sandbox FastAPI</span>
+              <span class="stat-card__value" data-sandbox-status>OK</span>
+              <span class="stat-card__meta" data-sandbox-meta>venv isolé · Tests 18/18</span>
+            </div>
+          </aside>
+        </div>
+
+        <div class="grid">
+          <article class="panel panel--wide">
+            <header class="panel__header">
+              <h3>Backups chiffrés AES‑256</h3>
+              <span class="chip chip--secure" data-backup-count>3 backups actifs</span>
+            </header>
+            <p>
+              Chaque modification déclenche un snapshot complet chiffré stocké
+              localement avec un identifiant horodaté AUTO_BACKUP_YYYYMMDD_HHMMSS.
+              Le module peut restaurer instantanément la dernière version stable en
+              cas d’échec d’auto-test.
+            </p>
+            <div class="backup-list" data-backup-list></div>
+          </article>
+
+          <article class="panel">
+            <header class="panel__header">
+              <h3>File Watchers &amp; Sandbox</h3>
+              <span class="chip chip--action" data-run-sandbox>Relancer un auto-test</span>
+            </header>
+            <p>
+              Surveillance continue des répertoires critiques (UI, backend,
+              modèles). Les scripts générés sont exécutés dans une sandbox FastAPI
+              isolée avant déploiement.
+            </p>
+            <ul class="watcher-list" data-watchers-list></ul>
+            <div class="sandbox-metrics">
+              <div>
+                <span class="sandbox-metrics__label">Dernier test</span>
+                <span class="sandbox-metrics__value" data-sandbox-updated>il y a 12 min</span>
+              </div>
+              <div>
+                <span class="sandbox-metrics__label">Résultats</span>
+                <span class="sandbox-metrics__value" data-sandbox-score>18/18 checks</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="panel">
+            <header class="panel__header">
+              <h3>File d’auto-modifications</h3>
+              <button class="chip chip--action" data-process-next>
+                Traiter la prochaine tâche
+              </button>
+            </header>
+            <p>
+              Les patchs sont classés par criticité. Les ajustements mineurs sont
+              appliqués automatiquement, tandis que les changements sensibles
+              attendent ta validation vocale ou textuelle.
+            </p>
+            <ul class="queue-list" data-queue-list></ul>
+          </article>
+
+          <article class="panel">
+            <header class="panel__header">
+              <h3>Adaptation émotionnelle</h3>
+              <span class="chip chip--luxury" data-emotion-label>Focus neutre</span>
+            </header>
+            <p>
+              Le module pondère ses décisions en fonction de ton ton vocal ou
+              émotion détecté. Ajuste le curseur pour simuler l’impact sur la
+              prise de décision.
+            </p>
+            <label class="range-control range-control--vertical">
+              <span>Intensité émotionnelle</span>
+              <input
+                type="range"
+                min="0"
+                max="100"
+                value="48"
+                data-emotion-slider
+              />
+            </label>
+            <p class="emotion-guidance" data-emotion-guidance>
+              Priorisation équilibrée entre innovation et stabilité.
+            </p>
+          </article>
+
+          <article class="panel panel--wide">
+            <header class="panel__header">
+              <h3>Journalisation &amp; sécurité</h3>
+              <button class="chip chip--action" data-export-logs>
+                Exporter les logs AUTO_PATCH
+              </button>
+            </header>
+            <p>
+              Toutes les opérations sont historisées dans
+              <code>Eterna\Logs\Autonomy</code> avec un identifiant unique et un hash
+              de vérification. Les anomalies déclenchent un rollback automatique.
+            </p>
+            <ul class="log-list" data-autonomy-log></ul>
           </article>
         </div>
       </section>

@@ -61,9 +61,31 @@ Built for partner operations teams who require fleet visibility and RMA automati
 - MQTT bridge panel to subscribe or publish to telemetry topics.
 - Compliance dashboard ensuring encrypted BIOS recovery and TPM verification.
 
+## Concept D – Self-Coding & Autonomy Module
+Extends the companion with an autonomy cockpit qui permet à Eterna 3.0 d’analyser, modifier et tester son propre code en local.
+
+### Key Screens
+1. **Autonomy Cycle Monitor**
+   - Hero strip summarising backup timestamp, validation mode (manuel vs automatique) et statut de la sandbox FastAPI isolée.
+   - Visual pipeline (Observation → Proposition → Validation → Application → Vérification → Mémorisation) highlighting the active phase.
+2. **Secure Backup & Rollback Vault**
+   - Cards listing `AUTO_BACKUP_YYYYMMDD_HHMMSS` snapshots, taille chiffrée, et actions de restauration instantanée.
+   - Live logbook (`AUTO_PATCH_*`) qui archive validations, tests sandbox et rollbacks.
+3. **Autonomous Change Queue**
+   - Kanban lite classant les patchs par criticité (UI, Sécurité, IA) avec boutons de validation/approbation selon le protocole décrit.
+   - Emotion slider pilotant la stratégie (stabilité vs innovation) relié au module d’analyse émotionnelle.
+4. **Sandbox & Watcher Control**
+   - Statuts des watchers (UI, backend FastAPI, modèles émotionnels) et résultats des tests (18/18 checks) exécutés dans un venv isolé.
+   - CTA pour déclencher un nouvel auto-test ou exporter les journaux vers `Eterna\Logs\Autonomy`.
+
+### Differentiators
+- Simule entièrement le protocole d’auto-modification : backup automatique, validation manuelle obligatoire pour les patchs sensibles, auto-test sandbox et rollback sécurisé.
+- Prépare l’intégration future avec OpenDevin / Auto-GPT en exposant des points d’extension backend (FastAPI) et watchers Python.
+- Visualise l’impact émotionnel (ton utilisateur) sur la priorisation des améliorations grâce au module d’adaptation contextuelle.
+
 ## Implementation Roadmap
-1. **Information Architecture**: Build navigation schema that allows switching between the three interface modes from a shared shell.
+1. **Information Architecture**: Build navigation schema that allows switching between the four interface modes from a shared shell.
 2. **Design Tokens**: Encode color, typography, spacing, and lighting accent variables for reuse.
-3. **Component Library**: Develop card, telemetry gauge, map, workflow builder, and modal components as responsive web components.
-4. **Prototype Build**: Implement interactive prototype (see `/web` directory) with theme toggles representing each concept.
+3. **Component Library**: Develop card, telemetry gauge, map, workflow builder, sandbox monitor, and modal components as responsive web components.
+4. **Prototype Build**: Implement interactive prototype (see `/web` directory) with theme toggles representing chaque concept dont le module autonome.
 5. **Validation**: Conduct partner workshops aligning features with service-level expectations from the spec, especially OTA updates and concierge support.
