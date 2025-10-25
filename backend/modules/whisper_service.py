@@ -1,74 +1,60 @@
-"""Speech-to-text helper built on Whisper or SpeechBrain."""
+"""Speech-to-text service backed by local Whisper models."""
 
 from __future__ import annotations
 
+import logging
 from pathlib import Path
-from typing import Optional
+from typing import Any, Dict, Optional
 
-try:  # pragma: no cover - optional dependency
-    import whisper
-except Exception:  # pragma: no cover - degrade gracefully
-    whisper = None  # type: ignore
+from backend.eterna_core_manager import LifecycleModule
 
-try:  # pragma: no cover - optional dependency
-    from speechbrain.pretrained import EncoderDecoderASR
-except Exception:  # pragma: no cover - degrade gracefully
-    EncoderDecoderASR = None  # type: ignore
+try:
+    from faster_whisper import WhisperModel
+except ModuleNotFoundError:  # pragma: no cover
+    WhisperModel = None  # type: ignore
 
 
-class WhisperService:
-    """Provide speech recognition locally with safe fallbacks."""
+class WhisperService(LifecycleModule):
+    """Encapsulates automatic speech recognition for offline use."""
 
-    def __init__(self, model_size: str = "small", cache_dir: Path | str = "./models/stt") -> None:
-        self.model_size = model_size
-        self.cache_dir = Path(cache_dir)
-        self.cache_dir.mkdir(parents=True, exist_ok=True)
-        self._whisper_model = None
-        self._speechbrain_model: Optional[EncoderDecoderASR] = None
-        self._bootstrap_models()
+    name = "whisper_service"
 
-    # ------------------------------------------------------------------
-    def transcribe(self, audio_path: Path | str) -> str:
-        """Transcribe audio from disk, falling back gracefully."""
+    def __init__(self, model_size: str = "medium", device: Optional[str] = None, compute_type: str = "int8") -> None:
+        self._model_size = model_size
+        self._device = device or "cuda"
+        self._compute_type = compute_type
+        self._model: Optional[WhisperModel] = None  # type: ignore[assignment]
+        self._logger = logging.getLogger("WhisperService")
+        if not self._logger.handlers:
+            handler = logging.StreamHandler()
+            handler.setFormatter(logging.Formatter("%(asctime)s | %(levelname)s | %(message)s"))
+            self._logger.addHandler(handler)
+            self._logger.setLevel(logging.INFO)
 
-        audio_path = Path(audio_path)
+    def start(self) -> None:
+        if WhisperModel is None:
+            self._logger.warning("faster-whisper not installed; ASR disabled")
+            return
+        self._logger.info("Loading Whisper %s model on %s", self._model_size, self._device)
+        self._model = WhisperModel(self._model_size, device=self._device, compute_type=self._compute_type)
 
-        if self._whisper_model is not None:
-            try:  # pragma: no cover - heavy dependency
-                result = self._whisper_model.transcribe(str(audio_path))
-                return str(result.get("text", "")).strip()
-            except Exception:
-                pass
+    def stop(self) -> None:
+        self._model = None
 
-        if self._speechbrain_model is not None:
-            try:  # pragma: no cover - heavy dependency
-                return str(self._speechbrain_model.transcribe_file(str(audio_path))).strip()
-            except Exception:
-                pass
-
-        return ""
-
-    def status(self) -> dict:
-        """Expose backend readiness for diagnostics."""
-
+    def status(self) -> Dict[str, Any]:
         return {
-            "whisper_available": self._whisper_model is not None,
-            "speechbrain_available": self._speechbrain_model is not None,
+            "model_size": self._model_size,
+            "device": self._device,
+            "loaded": self._model is not None,
         }
 
-    # ------------------------------------------------------------------
-    def _bootstrap_models(self) -> None:
-        if whisper is not None:
-            try:  # pragma: no cover - heavy dependency
-                self._whisper_model = whisper.load_model(self.model_size, download_root=str(self.cache_dir))
-            except Exception:
-                self._whisper_model = None
+    def transcribe(self, audio_path: Path) -> Dict[str, Any]:
+        if self._model is None:
+            raise RuntimeError("Whisper model is not loaded")
+        segments, info = self._model.transcribe(str(audio_path))
+        text = "".join(segment.text for segment in segments)
+        self._logger.info("Transcribed %s", audio_path)
+        return {"text": text, "language": info.language, "duration": info.duration}
 
-        if EncoderDecoderASR is not None:
-            try:  # pragma: no cover - heavy dependency
-                self._speechbrain_model = EncoderDecoderASR.from_hparams(
-                    source="speechbrain/asr-transformer-transformerlm-librispeech",
-                    savedir=str(self.cache_dir / "speechbrain"),
-                )
-            except Exception:
-                self._speechbrain_model = None
+
+__all__ = ["WhisperService"]

@@ -1,104 +1,83 @@
-"""System control utilities for Eterna."""
+"""System control helpers for automation and telemetry."""
 
 from __future__ import annotations
 
-import json
-from dataclasses import dataclass
-from typing import Optional
+import logging
+from typing import Any, Dict, Optional
 
-try:  # pragma: no cover - optional dependency
+try:  # Optional dependencies for runtime automation
     import psutil
-except ImportError:  # pragma: no cover
+except ModuleNotFoundError:  # pragma: no cover
     psutil = None  # type: ignore
 
-try:  # pragma: no cover - optional dependency
+try:
     import pyautogui
-except ImportError:  # pragma: no cover
+except ModuleNotFoundError:  # pragma: no cover
     pyautogui = None  # type: ignore
 
-try:  # pragma: no cover - optional dependency
+try:
     from openrgb import OpenRGBClient
-    from openrgb.utils import RGBColor
-except ImportError:  # pragma: no cover
+except ModuleNotFoundError:  # pragma: no cover
     OpenRGBClient = None  # type: ignore
-    RGBColor = None  # type: ignore
+
+from backend.eterna_core_manager import LifecycleModule
 
 
-@dataclass
-class SystemSnapshot:
-    cpu_percent: float
-    memory_percent: float
-    gpu_percent: Optional[float] = None
+class SystemControl(LifecycleModule):
+    """Collects telemetry and exposes automation hooks."""
 
+    name = "system_control"
 
-class SystemControlService:
-    """Expose automation primitives and telemetry for the UI."""
+    def __init__(self, log_dir: Optional[str] = None) -> None:
+        self._log_dir = log_dir
+        self._client: Optional[Any] = None
+        self._logger = logging.getLogger("SystemControl")
+        if not self._logger.handlers:
+            handler = logging.StreamHandler()
+            formatter = logging.Formatter("%(asctime)s | %(levelname)s | %(message)s")
+            handler.setFormatter(formatter)
+            self._logger.addHandler(handler)
+            self._logger.setLevel(logging.INFO)
 
-    def __init__(self) -> None:
-        self._openrgb: Optional[OpenRGBClient] = None
+    def start(self) -> None:
+        if OpenRGBClient is not None:
+            try:
+                self._client = OpenRGBClient()  # type: ignore[call-arg]
+                self._logger.info("Connected to OpenRGB server")
+            except Exception as exc:  # pragma: no cover - external dependency
+                self._logger.warning("Unable to connect to OpenRGB: %s", exc)
+        if pyautogui is None:
+            self._logger.warning("PyAutoGUI not installed; automation disabled")
 
-    def get_snapshot(self) -> SystemSnapshot:
-        cpu = float(psutil.cpu_percent(interval=None)) if psutil else 0.0
-        memory = float(psutil.virtual_memory().percent) if psutil else 0.0
-        gpu = self._probe_gpu()
-        return SystemSnapshot(cpu_percent=cpu, memory_percent=memory, gpu_percent=gpu)
+    def stop(self) -> None:
+        if self._client is not None:
+            try:
+                self._client.disconnect()  # type: ignore[attr-defined]
+                self._logger.info("Disconnected from OpenRGB")
+            except Exception as exc:  # pragma: no cover
+                self._logger.warning("Failed to disconnect OpenRGB: %s", exc)
+        self._client = None
 
-    def move_mouse(self, x: int, y: int) -> bool:
-        if pyautogui is None:  # pragma: no cover
-            return False
-        try:
-            pyautogui.moveTo(x, y)
-            return True
-        except Exception:
-            return False
-
-    def type_text(self, text: str) -> bool:
-        if pyautogui is None:  # pragma: no cover
-            return False
-        try:
-            pyautogui.typewrite(text)
-            return True
-        except Exception:
-            return False
-
-    def set_rgb_color(self, r: int, g: int, b: int) -> bool:
-        if OpenRGBClient is None or RGBColor is None:  # pragma: no cover
-            return False
-        try:
-            if self._openrgb is None:
-                self._openrgb = OpenRGBClient()
-            color = RGBColor(r, g, b)
-            for device in self._openrgb.devices:
-                device.set_color(color)
-            return True
-        except Exception:
-            return False
-
-    def _probe_gpu(self) -> Optional[float]:
-        if psutil is None:  # pragma: no cover
-            return None
-        try:
-            if hasattr(psutil, "sensors_temperatures"):
-                temps = psutil.sensors_temperatures()
-                if not temps:
-                    return None
-            # Without a GPU monitor dependency we expose utilisation via NVML if available later.
-            return None
-        except Exception:
-            return None
-
-    def to_json(self) -> str:
-        snapshot = self.get_snapshot()
-        return json.dumps(snapshot.__dict__)
-
-    def status(self) -> dict:
-        """Return telemetry about available control backends."""
-
+    def status(self) -> Dict[str, Any]:
         return {
-            "psutil_available": psutil is not None,
-            "pyautogui_available": pyautogui is not None,
-            "openrgb_available": OpenRGBClient is not None,
+            "openrgb": self._client is not None,
+            "automation": pyautogui is not None,
+            "telemetry": psutil is not None,
         }
 
+    def get_telemetry(self) -> Dict[str, Any]:
+        if psutil is None:
+            raise RuntimeError("psutil is required to gather telemetry")
+        return {
+            "cpu": psutil.cpu_percent(interval=0.1),
+            "gpu": None,  # Placeholder for dedicated GPU integration
+            "memory": psutil.virtual_memory()._asdict(),
+        }
 
-__all__ = ["SystemControlService", "SystemSnapshot"]
+    def move_mouse(self, x: int, y: int) -> None:
+        if pyautogui is None:
+            raise RuntimeError("PyAutoGUI is required for automation")
+        pyautogui.moveTo(x, y)
+
+
+__all__ = ["SystemControl"]

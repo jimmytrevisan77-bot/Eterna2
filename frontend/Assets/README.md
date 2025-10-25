@@ -1,3 +1,3 @@
-# Frontend Assets
+# Assets
 
-This directory contains assets linked into the WPF application. The official Eternadream logo remains stored under `assets/logo.png` and is linked here at build time.
+Copy the official `logo_or_rouge_no_text_transparent_300dpi.png` file into this folder before building the WPF application. The project ships with a text placeholder.

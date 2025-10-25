@@ -1,126 +1,115 @@
-"""Network security layer ensuring Eterna stays local-first."""
+"""Network governance layer enforcing the offline-first policy."""
 
 from __future__ import annotations
 
 import json
 import logging
-from contextlib import contextmanager
+import socket
 from pathlib import Path
-from typing import Dict, Iterator, Optional
+from typing import Any, Dict, Iterable, List, Optional
+from urllib.parse import urlparse
 
-try:  # pragma: no cover - optional dependency for strict firewalling
-    import psutil
-except Exception:  # pragma: no cover - degrade gracefully
-    psutil = None  # type: ignore
-
-CONFIG_ROOT = Path("./Config")
-RULES_FILE = CONFIG_ROOT / "NetworkRules.json"
-LOG_DIR = Path("./Logs")
-LOG_FILE = LOG_DIR / "network.log"
-LOCALHOST = "127.0.0.1"
+from backend.eterna_core_manager import LifecycleModule
 
 
-class NetworkManager:
-    """Centralise allowed endpoints and local IPC channels."""
+class NetworkManager(LifecycleModule):
+    """Controls outbound allow-lists and records every network interaction."""
 
-    def __init__(self) -> None:
-        LOG_DIR.mkdir(parents=True, exist_ok=True)
-        logging.basicConfig(level=logging.INFO)
-        self.logger = logging.getLogger("eterna.network")
-        self._configure_logger()
-        self.rules = self._load_rules()
+    name = "network_manager"
 
-    # ------------------------------------------------------------------
-    def is_outgoing_allowed(self, host: str) -> bool:
-        """Check whether the host is authorised for outbound calls."""
+    def __init__(self, rules_path: Optional[Path] = None, log_dir: Optional[Path] = None) -> None:
+        self._rules_path = rules_path or Path("Config") / "NetworkRules.json"
+        self._log_dir = log_dir or Path("Logs")
+        self._logger = self._create_logger()
+        self._rules: Dict[str, Any] = {}
+        self._audit_entries: List[Dict[str, Any]] = []
 
-        allowed = self.rules.get("allowed_hosts", [])
-        decision = host in allowed
-        self.logger.info("OUTGOING %s -> %s", "ALLOW" if decision else "BLOCK", host)
-        return decision
+    def _create_logger(self) -> logging.Logger:
+        self._log_dir.mkdir(parents=True, exist_ok=True)
+        log_file = self._log_dir / "network.log"
+        logger = logging.getLogger("NetworkManager")
+        if not logger.handlers:
+            logger.setLevel(logging.INFO)
+            handler = logging.FileHandler(log_file, encoding="utf-8")
+            formatter = logging.Formatter("%(asctime)s | %(levelname)s | %(message)s")
+            handler.setFormatter(formatter)
+            logger.addHandler(handler)
+        return logger
 
-    def register_outgoing_host(self, host: str) -> None:
-        """Allow a new outbound host and persist it."""
+    def start(self) -> None:
+        self._rules = self._load_rules()
+        self._logger.info(
+            "Network manager initialised with %s outbound rules",
+            len(self._rules.get("allowed_hosts", [])),
+        )
 
-        allowed = set(self.rules.setdefault("allowed_hosts", []))
-        if host not in allowed:
-            allowed.add(host)
-            self.rules["allowed_hosts"] = sorted(allowed)
-            self._store_rules()
-            self.logger.info("REGISTER allow host=%s", host)
+    def stop(self) -> None:
+        self._logger.info("Network manager stopped")
 
-    def block_incoming(self) -> None:
-        """Close any unexpected external listeners (best effort)."""
-
-        if psutil is None:  # pragma: no cover - fallback
-            self.logger.warning("psutil not available; incoming scan skipped")
-            return
-
-        for conn in psutil.net_connections(kind="inet"):
-            if conn.laddr and conn.laddr.ip not in {LOCALHOST, "::1"} and conn.status == psutil.CONN_LISTEN:
-                self.logger.warning("Detected non-local listener on %s:%s", conn.laddr.ip, conn.laddr.port)
-
-    @contextmanager
-    def local_pipe(self, name: str = "eterna_ipc") -> Iterator[str]:
-        """Expose a named pipe endpoint for WPF <-> backend comms."""
-
-        pipe_name = fr"\\\\.\\pipe\\{name}"
-        self.logger.info("PIPE open %s", pipe_name)
-        try:
-            yield pipe_name
-        finally:
-            self.logger.info("PIPE close %s", pipe_name)
-
-    def pipe_name(self, name: str = "eterna_ipc") -> str:
-        """Return the Windows named pipe identifier without opening it."""
-
-        return fr"\\\\.\\pipe\\{name}"
-
-    def log_request(self, method: str, target: str, payload_bytes: int = 0) -> None:
-        """Record a network access in the local log."""
-
-        self.logger.info("REQUEST method=%s target=%s bytes=%s", method.upper(), target, payload_bytes)
-
-    def status(self) -> Dict[str, str | bool]:
-        """Expose current rule information for diagnostics."""
-
+    def status(self) -> Dict[str, Any]:
         return {
-            "rules_file": str(RULES_FILE),
-            "log_file": str(LOG_FILE),
-            "psutil_available": psutil is not None,
-            "allowed_hosts": ",".join(self.rules.get("allowed_hosts", [])),
+            "allowed_hosts": self._rules.get("allowed_hosts", []),
+            "allow_incoming": self._rules.get("allow_incoming", False),
+            "pipe_name": self._rules.get("pipe_name"),
+            "audit_entries": len(self._audit_entries),
         }
 
-    # ------------------------------------------------------------------
-    def _configure_logger(self) -> None:
-        handler = logging.FileHandler(LOG_FILE, encoding="utf-8")
-        formatter = logging.Formatter("%(asctime)s %(levelname)s %(message)s")
-        handler.setFormatter(formatter)
-
-        # ensure file handler only added once
-        if not any(isinstance(h, logging.FileHandler) and h.baseFilename == handler.baseFilename for h in self.logger.handlers):
-            self.logger.addHandler(handler)
-        self.logger.propagate = False
-
-    def _load_rules(self) -> Dict[str, list]:
-        if not RULES_FILE.exists():
-            default_rules = {
+    def _load_rules(self) -> Dict[str, Any]:
+        if not self._rules_path.exists():
+            self._logger.warning("Missing network rules file %s", self._rules_path)
+            return {
+                "allow_incoming": False,
+                "pipe_name": "eterna_core_pipe",
                 "allowed_hosts": [
                     "huggingface.co",
                     "shopify.com",
                     "printify.com",
                     "etsy.com",
-                    "ngrok.io",
                 ],
             }
-            self._store_rules(default_rules)
-            return default_rules
+        with self._rules_path.open("r", encoding="utf-8") as handle:
+            return json.load(handle)
 
-        with RULES_FILE.open("r", encoding="utf-8") as fh:
-            return json.load(fh)
+    def is_host_allowed(self, host: str) -> bool:
+        allowed = set(self._rules.get("allowed_hosts", []))
+        result = host in allowed
+        self._logger.info("Checked host %s -> %s", host, result)
+        return result
 
-    def _store_rules(self, rules: Optional[Dict[str, list]] = None) -> None:
-        RULES_FILE.parent.mkdir(parents=True, exist_ok=True)
-        data = rules or self.rules
-        with RULES_FILE.open("w", encoding="utf-8") as fh:
-            json.dump(data, fh, indent=2)
+    def validate_outbound(self, url: str) -> bool:
+        parsed = urlparse(url)
+        host = parsed.hostname
+        if not host:
+            raise ValueError(f"Invalid URL: {url}")
+        if not self.is_host_allowed(host):
+            self._logger.error("Blocked outbound request to %s", url)
+            return False
+        self._record_audit({"direction": "outbound", "url": url})
+        return True
+
+    def record_inbound_attempt(self, source: str) -> None:
+        if self._rules.get("allow_incoming"):
+            self._record_audit({"direction": "inbound", "source": source, "accepted": True})
+            self._logger.info("Allowed inbound connection from %s", source)
+        else:
+            self._record_audit({"direction": "inbound", "source": source, "accepted": False})
+            self._logger.warning("Blocked inbound connection from %s", source)
+
+    def _record_audit(self, entry: Dict[str, Any]) -> None:
+        self._audit_entries.append(entry)
+
+    def enforce_local_socket(self) -> socket.socket:
+        pipe_name = self._rules.get("pipe_name", "eterna_core_pipe")
+        sock = socket.socket(socket.AF_UNIX)
+        try:
+            sock.bind(f"\0{pipe_name}")
+        except OSError as exc:  # pragma: no cover - environment specific
+            self._logger.warning("Named pipe %s unavailable: %s", pipe_name, exc)
+        self._logger.info("Local socket %s prepared", pipe_name)
+        return sock
+
+    def export_audit(self) -> Iterable[Dict[str, Any]]:
+        return list(self._audit_entries)
+
+
+__all__ = ["NetworkManager"]

@@ -1,16 +1,24 @@
 {
+  "network": {
+    "pipe_name": "eterna_core_pipe",
+    "allow_incoming": false,
+    "allowed_hosts": [
+      "huggingface.co",
+      "shopify.com",
+      "printify.com",
+      "etsy.com",
+      "pypi.org",
+      "download.pytorch.org"
+    ]
+  },
   "models": {
     "llama": "meta-llama/Llama-3-8b",
-    "whisper": "small",
-    "tts": "tts_models/en/vctk/vits",
-    "realesrgan": "RealESRGAN_x4plus"
+    "whisper": "medium",
+    "tts": "tts_models/multilingual/multi-dataset/xtts_v2",
+    "realesrgan": "RealESRGAN_x4plus.pth"
   },
-  "storage": {
-    "memory_root": "./storage/memory",
-    "backups": "./Eterna/Backups"
-  },
-  "ui": {
-    "theme": "Eternadream",
-    "haloColors": ["#6C2E8E", "#AF1A6D", "#FFD46F"]
+  "ios": {
+    "endpoint": "https://localhost:8765",
+    "token": "SET_TOKEN_HERE"
   }
 }

@@ -1,72 +1,66 @@
-"""Local LLaMA/Mistral text generation helper."""
+"""Local text generation service built around Hugging Face transformers."""
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+import logging
 from pathlib import Path
-from typing import Optional
+from typing import Any, Dict, Optional
 
-try:  # pragma: no cover - optional dependency
-    from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
-except Exception:  # pragma: no cover - degrade gracefully without transformers
+from backend.eterna_core_manager import LifecycleModule
+
+try:  # Optional heavy dependency
+    from transformers import AutoModelForCausalLM, AutoTokenizer
+    import torch
+except ModuleNotFoundError:  # pragma: no cover
     AutoModelForCausalLM = None  # type: ignore
     AutoTokenizer = None  # type: ignore
-    pipeline = None  # type: ignore
+    torch = None  # type: ignore
 
 
-@dataclass
-class GenerationConfig:
-    model_name: str = "meta-llama/Llama-3-8b"
-    max_new_tokens: int = 256
-    temperature: float = 0.7
-    device: str | int | None = "cuda" if AutoModelForCausalLM else None
+class LlamaService(LifecycleModule):
+    """Loads a local LLaMA-compatible model for fully offline inference."""
 
+    name = "llama_service"
 
-class LlamaService:
-    """Lightweight wrapper around a local LLaMA compatible model."""
+    def __init__(self, model_name: str = "meta-llama/Llama-3-8b", device: Optional[str] = None, cache_dir: Optional[Path] = None) -> None:
+        self._model_name = model_name
+        self._device = device or ("cuda" if torch and torch.cuda.is_available() else "cpu")
+        self._cache_dir = cache_dir
+        self._model: Optional[Any] = None
+        self._tokenizer: Optional[Any] = None
+        self._logger = logging.getLogger("LlamaService")
+        if not self._logger.handlers:
+            handler = logging.StreamHandler()
+            handler.setFormatter(logging.Formatter("%(asctime)s | %(levelname)s | %(message)s"))
+            self._logger.addHandler(handler)
+            self._logger.setLevel(logging.INFO)
 
-    def __init__(self, cache_dir: Path | str = "./models/llm", config: Optional[GenerationConfig] = None) -> None:
-        self.cache_dir = Path(cache_dir)
-        self.cache_dir.mkdir(parents=True, exist_ok=True)
-        self.config = config or GenerationConfig()
-        self._generator = None
-        self._bootstrap_model()
-
-    # ------------------------------------------------------------------
-    def generate(self, prompt: str) -> str:
-        """Generate a completion for the supplied prompt."""
-
-        if self._generator is None:
-            return "[Text generation unavailable – install transformers + compatible weights]"
-
-        result = self._generator(
-            prompt,
-            max_new_tokens=self.config.max_new_tokens,
-            temperature=self.config.temperature,
-            do_sample=True,
-        )
-        if isinstance(result, list):
-            return result[0]["generated_text"]
-        return str(result)
-
-    def status(self) -> dict:
-        """Expose readiness state for diagnostics."""
-
-        return {"generator_ready": self._generator is not None}
-
-    # ------------------------------------------------------------------
-    def _bootstrap_model(self) -> None:
-        if pipeline is None or AutoTokenizer is None or AutoModelForCausalLM is None:
+    def start(self) -> None:
+        if AutoModelForCausalLM is None or AutoTokenizer is None:
+            self._logger.warning("transformers not installed; skipping LLaMA initialisation")
             return
+        self._logger.info("Loading model %s on %s", self._model_name, self._device)
+        self._tokenizer = AutoTokenizer.from_pretrained(self._model_name, cache_dir=self._cache_dir)
+        self._model = AutoModelForCausalLM.from_pretrained(self._model_name, device_map=self._device, cache_dir=self._cache_dir)
 
-        try:  # pragma: no cover - heavy dependency
-            self._generator = pipeline(
-                "text-generation",
-                model=self.config.model_name,
-                tokenizer=self.config.model_name,
-                model_kwargs={"torch_dtype": "auto"},
-                device=self.config.device,
-                cache_dir=str(self.cache_dir),
-            )
-        except Exception:
-            self._generator = None
+    def stop(self) -> None:
+        self._model = None
+        self._tokenizer = None
+
+    def status(self) -> Dict[str, Any]:
+        return {
+            "model_name": self._model_name,
+            "device": self._device,
+            "loaded": self._model is not None,
+        }
+
+    def generate(self, prompt: str, max_tokens: int = 256) -> str:
+        if self._model is None or self._tokenizer is None:
+            raise RuntimeError("Model is not loaded")
+        inputs = self._tokenizer(prompt, return_tensors="pt").to(self._device)
+        with torch.no_grad():  # type: ignore[operator]
+            outputs = self._model.generate(**inputs, max_new_tokens=max_tokens)
+        return self._tokenizer.decode(outputs[0], skip_special_tokens=True)
+
+
+__all__ = ["LlamaService"]

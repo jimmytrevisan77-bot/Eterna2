@@ -1,9 +1,13 @@
 {
+  "allow_incoming": false,
+  "pipe_name": "eterna_core_pipe",
   "allowed_hosts": [
     "huggingface.co",
     "shopify.com",
     "printify.com",
     "etsy.com",
-    "ngrok.io"
+    "pypi.org",
+    "download.pytorch.org",
+    "ngrok.app"
   ]
 }

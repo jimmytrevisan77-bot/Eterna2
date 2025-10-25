@@ -1,92 +1,85 @@
-"""Emotion analysis service combining DeepFace and SpeechBrain when available."""
+"""Emotion analytics module combining visual and vocal cues."""
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+import logging
 from pathlib import Path
-from typing import Dict, Optional
+from typing import Any, Dict, Optional
 
-try:  # pragma: no cover - optional dependency
+from backend.eterna_core_manager import LifecycleModule
+
+try:  # Optional dependencies
     from deepface import DeepFace
-except ImportError:  # pragma: no cover
+except ModuleNotFoundError:  # pragma: no cover
     DeepFace = None  # type: ignore
 
-try:  # pragma: no cover - optional dependency
-    from speechbrain.pretrained import EncoderClassifier
-except ImportError:  # pragma: no cover
-    EncoderClassifier = None  # type: ignore
+try:
+    from speechbrain.inference.interfaces import foreign_class
+except ModuleNotFoundError:  # pragma: no cover
+    foreign_class = None  # type: ignore
 
 
-@dataclass
-class EmotionSnapshot:
-    """Unified snapshot combining visual and vocal estimations."""
+class EmotionService(LifecycleModule):
+    """Evaluates emotion state from camera frames and audio samples."""
 
-    dominant_emotion: str
-    confidence: float
-    source: str
+    name = "emotion_service"
 
+    def __init__(self, model_dir: Optional[Path] = None, log_dir: Optional[Path] = None) -> None:
+        self._model_dir = model_dir or Path("models") / "emotion"
+        self._log_dir = log_dir or Path("Logs")
+        self._logger = self._create_logger()
+        self._speechbrain: Any = None
 
-class EmotionService:
-    """Provide emotional state estimation to the UI."""
+    def _create_logger(self) -> logging.Logger:
+        self._log_dir.mkdir(parents=True, exist_ok=True)
+        log_file = self._log_dir / "emotion.log"
+        logger = logging.getLogger("EmotionService")
+        if not logger.handlers:
+            logger.setLevel(logging.INFO)
+            handler = logging.FileHandler(log_file, encoding="utf-8")
+            formatter = logging.Formatter("%(asctime)s | %(levelname)s | %(message)s")
+            handler.setFormatter(formatter)
+            logger.addHandler(handler)
+        return logger
 
-    def __init__(self, models_dir: Path | str = "./storage/models") -> None:
-        self.models_dir = Path(models_dir)
-        self.models_dir.mkdir(parents=True, exist_ok=True)
-        self._voice_classifier = None
-        if EncoderClassifier is not None:  # pragma: no cover - optional branch
-            try:
-                self._voice_classifier = EncoderClassifier.from_hparams(
-                    source="speechbrain/emotion-recognition-wav2vec2", savedir=str(self.models_dir / "speechbrain")
-                )
-            except Exception:
-                self._voice_classifier = None
+    def start(self) -> None:
+        if foreign_class is not None:
+            self._speechbrain = foreign_class(
+                source="speechbrain/emotion-recognition-wav2vec2-IEMOCAP",
+                pymodule_file="custom_interface.py",
+                classname="CustomEmotionRecognition",
+                savedir=str(self._model_dir / "speechbrain"),
+            )
+            self._logger.info("Loaded SpeechBrain emotion model")
+        else:
+            self._logger.warning("SpeechBrain not installed; vocal emotion detection disabled")
+        if DeepFace is None:
+            self._logger.warning("DeepFace not installed; visual emotion detection disabled")
+        else:
+            self._logger.info("DeepFace available for emotion detection")
 
-    def analyse_face(self, image_path: Path | str) -> Optional[EmotionSnapshot]:
-        if DeepFace is None:  # pragma: no cover
-            return None
+    def stop(self) -> None:
+        self._speechbrain = None
 
-        try:  # pragma: no cover - depends on heavy model
-            analysis = DeepFace.analyze(img_path=str(image_path), actions=["emotion"], enforce_detection=False)
-            dominant = analysis["dominant_emotion"]
-            confidence = max(analysis.get("emotion", {}).values() or [0.0])
-            return EmotionSnapshot(dominant, float(confidence), source="vision")
-        except Exception:
-            return None
-
-    def analyse_voice(self, wav_path: Path | str) -> Optional[EmotionSnapshot]:
-        if self._voice_classifier is None:  # pragma: no cover
-            return None
-
-        try:  # pragma: no cover - depends on heavy model
-            scores, index = self._voice_classifier.classify_file(str(wav_path))
-            label = self._voice_classifier.hparams.label_encoder.decode_ndim(index)
-            confidence = float(scores.max().item()) if hasattr(scores, "max") else 0.0
-            return EmotionSnapshot(label, confidence, source="voice")
-        except Exception:
-            return None
-
-    def merge_signals(
-        self,
-        text_sentiment: Optional[EmotionSnapshot],
-        face_snapshot: Optional[EmotionSnapshot],
-        voice_snapshot: Optional[EmotionSnapshot],
-    ) -> EmotionSnapshot:
-        """Merge different modalities prioritising the most confident measurement."""
-
-        candidates = [snap for snap in (text_sentiment, face_snapshot, voice_snapshot) if snap]
-        if not candidates:
-            return EmotionSnapshot("neutre", 0.0, source="synthetic")
-
-        best = max(candidates, key=lambda snap: snap.confidence)
-        return EmotionSnapshot(best.dominant_emotion, best.confidence, source=best.source)
-
-    def service_status(self) -> Dict[str, bool]:
-        """Expose readiness for diagnostics."""
-
+    def status(self) -> Dict[str, Any]:
         return {
-            "deepface_available": DeepFace is not None,
-            "speechbrain_available": self._voice_classifier is not None,
+            "speechbrain": bool(self._speechbrain),
+            "deepface": DeepFace is not None,
         }
 
+    def analyse_frame(self, image_path: Path) -> Dict[str, Any]:
+        if DeepFace is None:
+            raise RuntimeError("DeepFace is required for visual emotion analysis")
+        result = DeepFace.analyze(img_path=str(image_path), actions=["emotion"], enforce_detection=False)
+        self._logger.info("Analysed frame %s", image_path)
+        return result  # type: ignore[return-value]
 
-__all__ = ["EmotionService", "EmotionSnapshot"]
+    def analyse_audio(self, audio_path: Path) -> Dict[str, Any]:
+        if self._speechbrain is None:
+            raise RuntimeError("SpeechBrain emotion model is not initialised")
+        scores, emotion = self._speechbrain.classify_file(str(audio_path))
+        self._logger.info("Analysed audio %s -> %s", audio_path, emotion)
+        return {"scores": scores, "emotion": emotion}
+
+
+__all__ = ["EmotionService"]
