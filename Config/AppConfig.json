@@ -1,0 +1,16 @@
+{
+  "models": {
+    "llama": "meta-llama/Llama-3-8b",
+    "whisper": "small",
+    "tts": "tts_models/en/vctk/vits",
+    "realesrgan": "RealESRGAN_x4plus"
+  },
+  "storage": {
+    "memory_root": "./storage/memory",
+    "backups": "./Eterna/Backups"
+  },
+  "ui": {
+    "theme": "Eternadream",
+    "haloColors": ["#6C2E8E", "#AF1A6D", "#FFD46F"]
+  }
+}
