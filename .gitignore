@@ -2,6 +2,12 @@ __pycache__/
 *.pyc
 outputs/
 models/
+!models/README.md
 .vs/
 bin/
 obj/
+
+logs/
+!logs/README.md
+creations/
+!creations/README.md

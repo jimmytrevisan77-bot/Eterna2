@@ -20,7 +20,7 @@ class MemoryManager(LifecycleModule):
     name = "memory_manager"
 
     def __init__(self, root: Optional[Path] = None) -> None:
-        self._root = root or Path("Config") / "Memory"
+        self._root = root or Path("config") / "Memory"
         self._root.mkdir(parents=True, exist_ok=True)
         self._db_personal: Optional[TinyDB] = None  # type: ignore
         self._db_professional: Optional[TinyDB] = None  # type: ignore

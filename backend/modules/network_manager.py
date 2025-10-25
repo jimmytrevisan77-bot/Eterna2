@@ -18,8 +18,8 @@ class NetworkManager(LifecycleModule):
     name = "network_manager"
 
     def __init__(self, rules_path: Optional[Path] = None, log_dir: Optional[Path] = None) -> None:
-        self._rules_path = rules_path or Path("Config") / "NetworkRules.json"
-        self._log_dir = log_dir or Path("Logs")
+        self._rules_path = rules_path or Path("config") / "NetworkRules.json"
+        self._log_dir = log_dir or Path("logs")
         self._logger = self._create_logger()
         self._rules: Dict[str, Any] = {}
         self._audit_entries: List[Dict[str, Any]] = []

@@ -17,6 +17,10 @@ MODULES: List[Tuple[str, str]] = [
     ("backend.modules", "whisper_service"),
     ("backend.modules", "tts_service"),
     ("backend.modules", "image_service"),
+    ("backend.modules", "commerce_manager"),
+    ("backend.modules", "security_manager"),
+    ("backend.modules", "self_update_manager"),
+    ("backend.modules", "task_orchestrator"),
 ]
 
 

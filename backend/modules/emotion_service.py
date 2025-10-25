@@ -26,7 +26,7 @@ class EmotionService(LifecycleModule):
 
     def __init__(self, model_dir: Optional[Path] = None, log_dir: Optional[Path] = None) -> None:
         self._model_dir = model_dir or Path("models") / "emotion"
-        self._log_dir = log_dir or Path("Logs")
+        self._log_dir = log_dir or Path("logs")
         self._logger = self._create_logger()
         self._speechbrain: Any = None
 

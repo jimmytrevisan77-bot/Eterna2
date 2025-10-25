@@ -18,8 +18,8 @@ class IOSBridge:
     """Manages the secure Socket.IO session used by the iOS companion."""
 
     def __init__(self, config_path: Optional[Path] = None, log_dir: Optional[Path] = None) -> None:
-        self._config_path = config_path or Path("Config") / "AppConfig.json"
-        self._log_dir = log_dir or Path("Logs")
+        self._config_path = config_path or Path("config") / "AppConfig.json"
+        self._log_dir = log_dir or Path("logs")
         self._logger = self._create_logger()
         self._loop = asyncio.new_event_loop()
         asyncio.set_event_loop(self._loop)

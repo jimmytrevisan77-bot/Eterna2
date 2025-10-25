@@ -27,8 +27,8 @@ class EternaCoreManager:
     """Coordinates all backend modules that power the local experience."""
 
     def __init__(self, config_path: Optional[Path] = None, log_dir: Optional[Path] = None) -> None:
-        self._config_path = config_path or Path("Config") / "AppConfig.json"
-        self._log_dir = log_dir or Path("Logs")
+        self._config_path = config_path or Path("config") / "AppConfig.json"
+        self._log_dir = log_dir or Path("logs")
         self._config: Dict[str, Any] = {}
         self._modules: Dict[str, LifecycleModule] = {}
         self._logger = self._create_logger()
@@ -52,7 +52,7 @@ class EternaCoreManager:
             self._config = {
                 "models": {},
                 "network": {"allow_incoming": False, "pipe_name": "eterna_core_pipe"},
-                "paths": {"memory_root": "Config/Memory"},
+                "paths": {"memory_root": "config/Memory"},
             }
             return
 
