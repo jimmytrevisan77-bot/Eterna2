@@ -37,9 +37,9 @@
         </button>
       </nav>
       <div class="status-chips">
-        <span class="chip chip--balanced">Profil actif : Balanced</span>
-        <span class="chip chip--secure">TPM 2.0</span>
-        <span class="chip chip--network">Dual 10 GbE</span>
+        <span class="chip chip--balanced" data-active-profile>Profil actif : Balanced</span>
+        <span class="chip chip--secure" data-security-chip>TPM 2.0</span>
+        <span class="chip chip--network" data-network-chip>Dual 10 GbE</span>
       </div>
     </header>
 
@@ -54,24 +54,52 @@
               éditeur d'orchestration complet.
             </p>
             <div class="hero-actions">
-              <button class="btn btn--primary">Lancer le mode Turbo</button>
-              <button class="btn btn--ghost">Synchroniser les zones RGB</button>
+              <button class="btn btn--primary" data-activate-turbo>
+                Basculer en mode Turbo
+              </button>
+              <button class="btn btn--ghost" data-sync-lighting>
+                Synchroniser les zones RGB
+              </button>
+            </div>
+            <div
+              class="profile-selector"
+              role="group"
+              aria-label="Profils de performance"
+            >
+              <button
+                class="profile-selector__btn is-active"
+                data-profile="silent"
+              >
+                Silent
+              </button>
+              <button
+                class="profile-selector__btn"
+                data-profile="balanced"
+              >
+                Balanced
+              </button>
+              <button
+                class="profile-selector__btn"
+                data-profile="turbo"
+              >
+                Turbo
+              </button>
             </div>
           </div>
           <aside class="concept__hero-aside">
             <div class="stat-card">
               <span class="stat-card__label">Température CPU</span>
-              <span class="stat-card__value">68°C</span>
+              <span class="stat-card__value" data-telemetry="cpuTemp">68°C</span>
               <span class="stat-card__meta">Silent target &lt; 80°C</span>
             </div>
             <div class="stat-card">
               <span class="stat-card__label">Charge GPU</span>
-              <span class="stat-card__value">74%</span>
+              <span class="stat-card__value" data-telemetry="gpuLoad">74%</span>
               <span class="stat-card__meta">RTX 5090 Neural Shader actif</span>
             </div>
             <div class="stat-card">
               <span class="stat-card__label">Acoustique</span>
-              <span class="stat-card__value">29 dBA</span>
+              <span class="stat-card__value" data-telemetry="acoustics">29 dBA</span>
               <span class="stat-card__meta">Compatible Silent Mode</span>
             </div>
           </aside>
@@ -89,13 +117,30 @@
               créneaux streaming, IA ou démonstrations partenaires.
             </p>
             <div class="curve-editor">
-              <div class="curve-editor__plot" role="img" aria-label="Graphique des courbes de ventilation"></div>
+              <svg
+                class="curve-editor__plot"
+                viewBox="0 0 100 60"
+                role="img"
+                aria-label="Graphique des courbes de ventilation"
+                data-curve-plot
+              ></svg>
               <ul class="curve-editor__legend">
                 <li><span class="legend-dot legend-dot--cpu"></span>CPU Vapor Loop</li>
                 <li><span class="legend-dot legend-dot--gpu"></span>GPU Radiateur 280 mm</li>
                 <li><span class="legend-dot legend-dot--psu"></span>PSU Zero-RPM</li>
               </ul>
             </div>
+            <label class="range-control">
+              <span>Boost thermique (TIM métal liquide)</span>
+              <input
+                type="range"
+                min="0"
+                max="100"
+                value="35"
+                id="boostRange"
+              />
+              <output id="boostValue" for="boostRange">35%</output>
+            </label>
           </article>
 
           <article class="panel">
@@ -107,28 +152,28 @@
               Analysez la consommation en direct, anticipez les pics et déclenchez
               des alertes sur les protections 2 kV intégrées.
             </p>
-            <div class="power-meter" role="img" aria-label="Jauge de consommation électrique"></div>
+            <div class="power-meter" role="img" aria-label="Jauge de consommation électrique">
+              <div
+                class="power-meter__bar"
+                data-power-bar
+                role="progressbar"
+                aria-valuemin="0"
+                aria-valuemax="100"
+                aria-valuenow="43"
+              ></div>
+              <div class="power-meter__value" data-telemetry="powerDraw">430 W</div>
+              <p class="power-meter__meta">
+                Charge PSU : <span data-telemetry="psuHeadroom">57%</span> de marge
+              </p>
+            </div>
           </article>
 
           <article class="panel">
             <header class="panel__header">
               <h3>Mises à jour OTA</h3>
-              <button class="chip chip--action">Planifier</button>
+              <button class="chip chip--action" data-open-maintenance>Planifier</button>
             </header>
-            <ul class="timeline">
-              <li>
-                <span class="timeline__title">BIOS X780E 2.04</span>
-                <span class="timeline__meta">Installé il y a 2 jours</span>
-              </li>
-              <li>
-                <span class="timeline__title">vBIOS RTX 5090 1.3</span>
-                <span class="timeline__meta">Disponible</span>
-              </li>
-              <li>
-                <span class="timeline__title">Firmware contrôleur RGB</span>
-                <span class="timeline__meta">Synchronisé</span>
-              </li>
-            </ul>
+            <ul class="timeline" data-ota-list></ul>
           </article>
         </div>
       </section>
@@ -143,24 +188,28 @@
               concierge EternaDream.
             </p>
             <div class="hero-actions">
-              <button class="btn btn--primary">Démarrer la visite guidée</button>
-              <button class="btn btn--ghost">Mode hors ligne</button>
+              <button class="btn btn--primary" data-start-tour>
+                Démarrer la visite guidée
+              </button>
+              <button class="btn btn--ghost" data-toggle-offline>
+                Mode hors ligne
+              </button>
             </div>
           </div>
           <aside class="concept__hero-aside">
             <div class="stat-card">
               <span class="stat-card__label">Scènes luminosité</span>
-              <span class="stat-card__value">3</span>
+              <span class="stat-card__value" data-scene-count>3</span>
               <span class="stat-card__meta">Silent Sapphire, Turbo Ember, Signature</span>
             </div>
             <div class="stat-card">
               <span class="stat-card__label">Assistant</span>
-              <span class="stat-card__value">Concierge AI</span>
+              <span class="stat-card__value" data-concierge-status>Concierge AI</span>
               <span class="stat-card__meta">Guidage bilingue</span>
             </div>
             <div class="stat-card">
               <span class="stat-card__label">Cache</span>
-              <span class="stat-card__value">Offline Ready</span>
+              <span class="stat-card__value" data-offline-indicator>Online</span>
               <span class="stat-card__meta">Parfait pop-up store</span>
             </div>
           </aside>
@@ -176,7 +225,29 @@
               Visualisez la coque titane, les barres RGB quadrizones et les zones
               d'accent crimson inspirées du logo EternaDream.
             </p>
-            <div class="showroom-view" role="img" aria-label="Maquette 3D interactive du châssis"></div>
+            <div class="showroom-view" role="img" aria-label="Maquette 3D interactive du châssis">
+              <div class="scene-selector" role="tablist" aria-label="Scènes de démonstration">
+                <button class="scene-selector__btn is-active" data-scene="silentSapphire" role="tab">
+                  Silent Sapphire
+                </button>
+                <button class="scene-selector__btn" data-scene="turboEmber" role="tab">
+                  Turbo Ember
+                </button>
+                <button class="scene-selector__btn" data-scene="partnerSignature" role="tab">
+                  Partner Signature
+                </button>
+              </div>
+              <div class="scene-details">
+                <h4 data-scene-title>Silent Sapphire</h4>
+                <p data-scene-description>
+                  Atmosphère feutrée bleutée avec éclairage synchronisé au profil Silent.
+                </p>
+                <p class="scene-lighting" data-scene-lighting>
+                  Température de couleur : 6200 K · Accent or profond
+                </p>
+                <ul class="scene-highlights" data-scene-highlights></ul>
+              </div>
+            </div>
           </article>
 
           <article class="panel">
@@ -189,6 +260,9 @@
               <li><span>Connectivité :</span> Wi-Fi 7 + dual 10 GbE</li>
               <li><span>Service :</span> Garantie 5 ans sur site</li>
             </ul>
+            <div class="tour-progress" data-tour-progress>
+              0 visiteurs guidés aujourd'hui
+            </div>
           </article>
 
           <article class="panel">
@@ -199,7 +273,27 @@
               Ajoutez des overlays co-brandés tout en conservant le logo EternaDream
               original. Planifiez les scènes d'éclairage pour vos événements.
             </p>
-            <button class="btn btn--secondary">Téléverser un thème</button>
+            <div class="theme-uploader">
+              <input type="file" id="themeUpload" accept="image/*,.json" hidden />
+              <label for="themeUpload" class="btn btn--secondary">Téléverser un thème</label>
+              <p class="theme-uploader__filename" data-theme-filename>
+                Aucun fichier sélectionné
+              </p>
+            </div>
+            <label class="range-control range-control--compact">
+              <span>Teinte lumineuse</span>
+              <input
+                type="range"
+                min="0"
+                max="360"
+                value="45"
+                id="lightingHue"
+              />
+              <output id="lightingHueValue" for="lightingHue">45°</output>
+            </label>
+            <div class="theme-preview" data-theme-preview>
+              Aperçu scène personnalisée
+            </div>
           </article>
         </div>
       </section>
@@ -214,24 +308,28 @@
               d'intrusion.
             </p>
             <div class="hero-actions">
-              <button class="btn btn--primary">Ouvrir la console MQTT</button>
-              <button class="btn btn--ghost">Exporter les métriques</button>
+              <button class="btn btn--primary" data-open-mqtt>
+                Ouvrir la console MQTT
+              </button>
+              <button class="btn btn--ghost" data-export-metrics>
+                Exporter les métriques
+              </button>
             </div>
           </div>
           <aside class="concept__hero-aside">
             <div class="stat-card">
               <span class="stat-card__label">Systèmes actifs</span>
-              <span class="stat-card__value">128</span>
+              <span class="stat-card__value" data-fleet-count>128</span>
               <span class="stat-card__meta">Contrats partenaires</span>
             </div>
             <div class="stat-card">
               <span class="stat-card__label">SLA</span>
-              <span class="stat-card__value">&lt; 48h</span>
+              <span class="stat-card__value" data-sla-value>&lt; 48h</span>
               <span class="stat-card__meta">Réparations sur site</span>
             </div>
             <div class="stat-card">
               <span class="stat-card__label">Alertes sécurité</span>
-              <span class="stat-card__value">3</span>
+              <span class="stat-card__value" data-security-alerts>3</span>
               <span class="stat-card__meta">Intrusions châssis</span>
             </div>
           </aside>
@@ -247,28 +345,55 @@
               Carte dynamique des systèmes avec statut firmware, capteurs d'intrusion
               et état du module TPM 2.0.
             </p>
-            <div class="fleet-map" role="img" aria-label="Carte de flotte"></div>
+            <div class="fleet-toolbar">
+              <div class="btn-group" role="group" aria-label="Filtrer les statuts">
+                <button class="chip chip--filter is-active" data-fleet-filter="all">
+                  Tous
+                </button>
+                <button class="chip chip--filter" data-fleet-filter="healthy">
+                  OK
+                </button>
+                <button class="chip chip--filter" data-fleet-filter="warning">
+                  Alertes
+                </button>
+                <button class="chip chip--filter" data-fleet-filter="offline">
+                  Hors ligne
+                </button>
+              </div>
+              <label class="search-control">
+                <span class="sr-only">Rechercher un système</span>
+                <input
+                  type="search"
+                  placeholder="Rechercher : tag, site, client"
+                  data-fleet-search
+                />
+              </label>
+            </div>
+            <div class="fleet-map" role="img" aria-label="Carte de flotte" data-fleet-map></div>
+            <table class="fleet-table">
+              <thead>
+                <tr>
+                  <th>Asset</th>
+                  <th>Site</th>
+                  <th>Profil</th>
+                  <th>Firmware</th>
+                  <th>Alertes</th>
+                </tr>
+              </thead>
+              <tbody data-fleet-table></tbody>
+            </table>
           </article>
 
           <article class="panel">
             <header class="panel__header">
               <h3>Playbooks automations</h3>
-              <button class="chip chip--action">Créer</button>
+              <button class="chip chip--action" data-create-playbook>Créer</button>
             </header>
             <p>
               Créez des scénarios pour pousser des BIOS, planifier la maintenance
               du TIM métal liquide ou ajuster les budgets énergétiques.
             </p>
-            <div class="playbook-list">
-              <div class="playbook">
-                <h4>Maintenance trimestrielle</h4>
-                <p>Rappel service TIM + validation acoustique Silent &lt; 32 dBA.</p>
-              </div>
-              <div class="playbook">
-                <h4>Surge Watch</h4>
-                <p>Analyse des journaux de protection 2 kV et ticket automatique.</p>
-              </div>
-            </div>
+            <div class="playbook-list" data-playbook-list></div>
           </article>
 
           <article class="panel">
@@ -279,7 +404,10 @@
               Assistant IA connecté aux télémétries CPU/GPU, au suivi PSU 1% et aux
               informations réseau Wi-Fi 7 / 10 GbE.
             </p>
-            <button class="btn btn--secondary">Ouvrir une session</button>
+            <button class="btn btn--secondary" data-open-support>
+              Ouvrir une session
+            </button>
+            <ul class="support-log" data-support-log></ul>
           </article>
         </div>
       </section>
@@ -293,6 +421,7 @@
       </p>
     </footer>
 
-    <script src="app.js"></script>
+    <div class="toast" role="status" aria-live="polite" data-toast hidden></div>
+    <script src="app.js" type="module"></script>
   </body>
 </html>
