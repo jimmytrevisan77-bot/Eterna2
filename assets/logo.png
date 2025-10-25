@@ -1,0 +1,12 @@
+Eternadream Logo Placeholder
+============================
+
+Le fichier officiel `logo_or_rouge_no_text_transparent_300dpi.png` doit être copié ici et renommé en `logo.png`.
+Ce dépôt n'embarque aucun binaire : remplacez ce fichier texte par le logo original pour bénéficier de
+l'affichage complet dans l'interface WPF.
+
+Chemins pris en compte :
+- `assets/logo.png`
+- `frontend/Assets/logo.png`
+
+Le script d'installation copiera automatiquement le logo disponible dans l'arborescence vers le dossier de sortie.
