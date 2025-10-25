@@ -4,8 +4,10 @@ Prototype d'application pour le système **Eterna 3.0 Ultimate ECX Partner**. Ce
 
 - Les spécifications produit de référence (`specs/Eterna_3.0_Ultimate_ECX_Partner_Specs.txt`).
 - Trois propositions d'interfaces complètes détaillées dans `docs/ui_design_solutions.md`.
-- Une maquette interactive statique située dans le dossier `web/` permettant de parcourir les trois concepts d'interface.
+- Une maquette interactive statique située dans le dossier `web/` permettant de parcourir les quatre concepts d'interface.
 - Un module "Self-Coding & Autonomy" simulant la boucle de sauvegarde, validation et sandbox décrite pour Eterna 3.0.
+- Un tableau de bord "Full Stack Local IA v3.1" détaillant les 10 modules stratégiques manquants (mémoire, NLU, émotions, PC,
+  sécurité, e-commerce, etc.).
 
 ## Utilisation
 
@@ -25,3 +27,4 @@ Prototype d'application pour le système **Eterna 3.0 Ultimate ECX Partner**. Ce
 - Connecter la maquette à un backend simulé pour démontrer OTA, RMA et analytics.
 - Préparer des exports design (Figma) et composants réutilisables (Storybook) pour accélérer l'industrialisation.
 - Prototyper l'orchestrateur d'auto-codage (FastAPI + watcher Python) et brancher l'UI Self-Coding sur des APIs locales.
+- Prioriser la livraison des modules v3.1 selon la roadmap (mémoire long terme, NLU, sécurité biométrique, autonomie multi-agents).

@@ -77,11 +77,16 @@ Extends the companion with an autonomy cockpit qui permet à Eterna 3.0 d’anal
 4. **Sandbox & Watcher Control**
    - Statuts des watchers (UI, backend FastAPI, modèles émotionnels) et résultats des tests (18/18 checks) exécutés dans un venv isolé.
    - CTA pour déclencher un nouvel auto-test ou exporter les journaux vers `Eterna\Logs\Autonomy`.
+5. **Roadmap Modules v3.1 “Full Stack Local IA”**
+   - Tableau bi-colonne listant les dix briques manquantes (mémoire vectorielle, NLU, émotions multimodales, contrôle PC, sécurité biométrique, etc.).
+   - Détails par module : objectif, priorité, scope, tags et bibliothèques GitHub recommandées cliquables.
+   - Mise à jour dynamique du chip “modules à intégrer” et synchronisation avec le journal AUTO_PATCH quand un module est ciblé.
 
 ### Differentiators
 - Simule entièrement le protocole d’auto-modification : backup automatique, validation manuelle obligatoire pour les patchs sensibles, auto-test sandbox et rollback sécurisé.
 - Prépare l’intégration future avec OpenDevin / Auto-GPT en exposant des points d’extension backend (FastAPI) et watchers Python.
 - Visualise l’impact émotionnel (ton utilisateur) sur la priorisation des améliorations grâce au module d’adaptation contextuelle.
+- Offre une vision consolidée de la roadmap v3.1 pour orchestrer l’autonomie totale (mémoire persistante, agents multi-plateformes, sécurité adaptative) directement depuis l’interface Self-Coding.
 
 ## Implementation Roadmap
 1. **Information Architecture**: Build navigation schema that allows switching between the four interface modes from a shared shell.

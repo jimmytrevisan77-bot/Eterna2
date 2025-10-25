@@ -220,6 +220,368 @@ const autonomyWatchers = [
   },
 ];
 
+const autonomyModules = [
+  {
+    id: 'module-memory',
+    title: 'Mémoire long terme (travail / personnel)',
+    objective:
+      'Installer une mémoire hybride séparant préférences professionnelles et personnelles tout en restant 100% locale.',
+    scope: 'Mémoire & contexte utilisateur',
+    status: 'Priorité 1 · À architecturer',
+    tags: ['Vector DB', 'Séparation contextes'],
+    libraries: [
+      {
+        name: 'ChromaDB',
+        url: 'https://github.com/chroma-core/chroma',
+        description: 'Mémoire vectorielle légère pour stockage local et embeddings rapides.',
+      },
+      {
+        name: 'FAISS',
+        url: 'https://github.com/facebookresearch/faiss',
+        description: 'Recherche vectorielle haute performance pour grandes bases mémoire.',
+      },
+      {
+        name: 'LangChain Memory',
+        url: 'https://github.com/langchain-ai/langchain',
+        description: 'Gestion conversationnelle multi-contexte (sessions, rôles, tonalités).',
+      },
+      {
+        name: 'TinyDB',
+        url: 'https://github.com/msiemens/tinydb',
+        description: 'Base JSON locale pour préférences explicites et paramètres utilisateur.',
+      },
+      {
+        name: 'Weaviate',
+        url: 'https://github.com/weaviate/weaviate',
+        description: 'Serveur vectoriel auto-hébergeable pour clustering mémoire avancé.',
+      },
+    ],
+  },
+  {
+    id: 'module-nlu',
+    title: 'Compréhension naturelle du langage',
+    objective:
+      'Permettre à Eterna de comprendre requêtes libres (voix, texte) sans commandes codées, avec détection d’intent.',
+    scope: 'NLU & intents',
+    status: 'Priorité 1 · Analyse en cours',
+    tags: ['LLM local', 'Intent'],
+    libraries: [
+      {
+        name: 'Transformers',
+        url: 'https://github.com/huggingface/transformers',
+        description: 'Support de LLaMA 3, Mistral et modèles quantisés pour inférence locale.',
+      },
+      {
+        name: 'FastIntent',
+        url: 'https://github.com/paulovn/fastintent',
+        description: 'Détection légère d’intentions compatible avec pipelines Python.',
+      },
+      {
+        name: 'Rasa NLU',
+        url: 'https://github.com/RasaHQ/rasa',
+        description: 'Parsing contextuel, entités et gestion de dialogue côté serveur.',
+      },
+      {
+        name: 'spaCy + neuralcoref',
+        url: 'https://github.com/explosion/spaCy',
+        description: 'Analyse linguistique, co-références et extraction d’entités.',
+      },
+      {
+        name: 'ParlAI',
+        url: 'https://github.com/facebookresearch/ParlAI',
+        description: 'Cadre de modèles de dialogue pour tests hors-ligne.',
+      },
+    ],
+  },
+  {
+    id: 'module-emotion',
+    title: 'Compréhension et gestion émotionnelle',
+    objective:
+      'Détecter émotions dans la voix, le texte et les flux visuels afin de pondérer les décisions d’auto-modification.',
+    scope: 'Emotion multimodale',
+    status: 'Priorité 2 · Besoin de dataset',
+    tags: ['Audio', 'Vision', 'Affect'],
+    libraries: [
+      {
+        name: 'HSEmotion',
+        url: 'https://github.com/av-savchenko/hsemotion',
+        description: 'Reconnaissance des émotions faciales en local.',
+      },
+      {
+        name: 'DeepFace',
+        url: 'https://github.com/serengil/deepface',
+        description: 'Pipelines visage + émotion multi-modèles.',
+      },
+      {
+        name: 'Emotion-LLaMA',
+        url: 'https://github.com/ZebangCheng/Emotion-LLaMA',
+        description: 'Modèles multimodaux texte/audio/visuel adaptés aux émotions.',
+      },
+      {
+        name: 'SpeechBrain Emotion',
+        url: 'https://github.com/speechbrain/speechbrain',
+        description: 'Modules de détection émotionnelle vocale.',
+      },
+      {
+        name: 'Affectiva SDK',
+        url: 'https://github.com/Affectiva/affdexme',
+        description: 'Option commerciale pour reconnaissance émotionnelle visuelle.',
+      },
+    ],
+  },
+  {
+    id: 'module-pc-control',
+    title: 'Contrôle total du PC',
+    objective:
+      'Automatiser gestion fichiers, logiciels, périphériques et éclairage RGB sans interventions manuelles.',
+    scope: 'Automatisation système',
+    status: 'Priorité 1 · À prototyper',
+    tags: ['Automation', 'RGB'],
+    libraries: [
+      {
+        name: 'PyAutoGUI',
+        url: 'https://github.com/asweigart/pyautogui',
+        description: 'Contrôle souris/clavier/écran cross-platform.',
+      },
+      {
+        name: 'Psutil',
+        url: 'https://github.com/giampaolo/psutil',
+        description: 'Monitoring CPU, GPU et RAM pour déclencheurs.',
+      },
+      {
+        name: 'OpenRGB SDK',
+        url: 'https://github.com/CalcProgrammer1/OpenRGB',
+        description: 'Gestion unifiée de l’éclairage RGB matériel.',
+      },
+      {
+        name: 'PyPsexec',
+        url: 'https://github.com/jborean93/pypsexec',
+        description: 'Exécution de commandes Windows sous sandbox contrôlée.',
+      },
+      {
+        name: 'Keyboard/Mouse',
+        url: 'https://github.com/boppreh/keyboard',
+        description: 'Gestion entrée physique directe pour macros avancées.',
+      },
+    ],
+  },
+  {
+    id: 'module-self-edit',
+    title: 'Auto-modification du code + backup',
+    objective:
+      'Permettre commits automatiques, sauvegardes chiffrées et rollback si un patch échoue en sandbox.',
+    scope: 'DevOps autonomie',
+    status: 'Priorité 1 · Spécifications validées',
+    tags: ['GitOps', 'Backups'],
+    libraries: [
+      {
+        name: 'GitPython',
+        url: 'https://github.com/gitpython-developers/GitPython',
+        description: 'Automatisation des commits, diff et rollback.',
+      },
+      {
+        name: 'OpenDevin',
+        url: 'https://github.com/OpenDevin/OpenDevin',
+        description: 'Agent IA auto-développement pour planifier et tester.',
+      },
+      {
+        name: 'Awesome LLM Agents',
+        url: 'https://github.com/yoheinakajima/awesome-llm-agents',
+        description: 'Catalogue de frameworks agents pour orchestrateurs.',
+      },
+      {
+        name: 'Guardrails.ai',
+        url: 'https://github.com/ShreyaR/guardrails',
+        description: 'Validation et politiques de sécurité sur code généré.',
+      },
+      {
+        name: 'GitBackupPy',
+        url: 'https://github.com/jkallini/git-backup-py',
+        description: 'Backups automatisés de dépôts Git encryptés.',
+      },
+    ],
+  },
+  {
+    id: 'module-visual',
+    title: 'Upscale / retouche visuelle automatique',
+    objective:
+      'Améliorer créations visuelles, corriger imperfections et upscaler rendus produits automatiquement.',
+    scope: 'Pipeline créatif',
+    status: 'Priorité 2 · Stack à assembler',
+    tags: ['Image', 'Qualité'],
+    libraries: [
+      {
+        name: 'Real-ESRGAN',
+        url: 'https://github.com/xinntao/Real-ESRGAN',
+        description: 'Super-résolution IA pour visuels produits.',
+      },
+      {
+        name: 'GIMP-Python',
+        url: 'https://github.com/GNOME/gimp',
+        description: 'Automatisation de retouches via scripts Python.',
+      },
+      {
+        name: 'GFPGAN',
+        url: 'https://github.com/TencentARC/GFPGAN',
+        description: 'Restauration et amélioration de visages.',
+      },
+      {
+        name: 'StableSR',
+        url: 'https://github.com/Iceclear/StableSR',
+        description: 'Upscale par diffusion pour assets marketing.',
+      },
+      {
+        name: 'RemBG',
+        url: 'https://github.com/danielgatis/rembg',
+        description: 'Suppression automatique de fond en local.',
+      },
+    ],
+  },
+  {
+    id: 'module-ecommerce',
+    title: 'Gestion e-commerce (Shopify, Printify, Etsy)',
+    objective:
+      'Administrer fiches produits, SEO, prix et publications cross-plateformes pour la boutique Eterna.',
+    scope: 'Commerce connecté',
+    status: 'Priorité 3 · Cadrage marketing',
+    tags: ['Shop', 'Automation'],
+    libraries: [
+      {
+        name: 'ShopifyAPI',
+        url: 'https://github.com/Shopify/shopify_python_api',
+        description: 'Intégration complète Shopify (produits, commandes, webhooks).',
+      },
+      {
+        name: 'PrintifyAPI',
+        url: 'https://github.com/ralphbean/printify-api',
+        description: 'Wrapper non officiel pour catalogues Printify.',
+      },
+      {
+        name: 'Etsy OpenAPI',
+        url: 'https://github.com/Etsy/open-api',
+        description: 'Gestion annonces et statistiques Etsy.',
+      },
+      {
+        name: 'SEO-Analyzer',
+        url: 'https://github.com/seomoz/SEO-Analyzer',
+        description: 'Audits SEO automatiques sur descriptions produits.',
+      },
+      {
+        name: 'Requests + BeautifulSoup',
+        url: 'https://github.com/psf/requests',
+        description: 'Scraping tendances Etsy/Printify pour ajustement offre.',
+      },
+    ],
+  },
+  {
+    id: 'module-ios',
+    title: 'Synchronisation iOS (remote)',
+    objective:
+      'Contrôler Eterna depuis iPhone avec commandes vocales/visuelles sécurisées.',
+    scope: 'Mobile & réseau',
+    status: 'Priorité 2 · Prototype réseau',
+    tags: ['iOS', 'Remote'],
+    libraries: [
+      {
+        name: 'FastAPI WebSocket',
+        url: 'https://github.com/tiangolo/fastapi',
+        description: 'Communication bidirectionnelle locale.',
+      },
+      {
+        name: 'Python-Socket.IO',
+        url: 'https://github.com/miguelgrinberg/python-socketio',
+        description: 'Liaison temps réel PC ↔ iOS.',
+      },
+      {
+        name: 'PyNgrok',
+        url: 'https://github.com/alexdlaird/ngrok',
+        description: 'Tunnel sécurisé pour accès distant ponctuel.',
+      },
+      {
+        name: 'SwiftNIO',
+        url: 'https://github.com/apple/swift-nio',
+        description: 'Pile réseau native côté app iOS.',
+      },
+      {
+        name: 'React Native',
+        url: 'https://github.com/facebook/react-native',
+        description: 'Bridge hybride pour UI compagnon si nécessaire.',
+      },
+    ],
+  },
+  {
+    id: 'module-security',
+    title: 'Sécurité adaptative et biométrique',
+    objective:
+      'Mettre en place authentification vocale/visuelle et verrouillage dynamique selon comportements.',
+    scope: 'Sécurité locale',
+    status: 'Priorité 1 · Audit requis',
+    tags: ['Biométrie', 'Sécurité'],
+    libraries: [
+      {
+        name: 'SpeechBrain Speaker Verification',
+        url: 'https://github.com/speechbrain/speechbrain',
+        description: 'Identification vocale et détection anomalies.',
+      },
+      {
+        name: 'FaceNet',
+        url: 'https://github.com/davidsandberg/facenet',
+        description: 'Reconnaissance visage pour login local.',
+      },
+      {
+        name: 'PyOTP',
+        url: 'https://github.com/pyauth/pyotp',
+        description: 'Double authentification locale et tokens temporaires.',
+      },
+      {
+        name: 'Cryptography',
+        url: 'https://github.com/pyca/cryptography',
+        description: 'Chiffrement AES-256 et signatures locales.',
+      },
+      {
+        name: 'Watchdog',
+        url: 'https://github.com/gorakhargosh/watchdog',
+        description: 'Détection d’activité suspecte sur fichiers et périphériques.',
+      },
+    ],
+  },
+  {
+    id: 'module-autonomy',
+    title: 'Autonomie totale (planification + veille + création)',
+    objective:
+      'Donner à Eterna la capacité de planifier, exécuter et livrer des projets complets en boucle fermée.',
+    scope: 'Orchestration multi-agents',
+    status: 'Priorité 1 · Blueprint à finaliser',
+    tags: ['Agents', 'Planning'],
+    libraries: [
+      {
+        name: 'OpenDevin',
+        url: 'https://github.com/OpenDevin/OpenDevin',
+        description: 'Agent logiciel complet pour auto-développement.',
+      },
+      {
+        name: 'TaskWeaver',
+        url: 'https://github.com/microsoft/TaskWeaver',
+        description: 'Orchestration et planification de tâches IA.',
+      },
+      {
+        name: 'LangGraph',
+        url: 'https://github.com/langchain-ai/langgraph',
+        description: 'Reasoning par graphes d’agents LangChain.',
+      },
+      {
+        name: 'APScheduler',
+        url: 'https://github.com/agronholm/apscheduler',
+        description: 'Planification locale de tâches récurrentes.',
+      },
+      {
+        name: 'AlphaCode (référence)',
+        url: 'https://github.com/deepmind/code_contests',
+        description: 'Jeu de données / référence pour auto-codage avancé.',
+      },
+    ],
+  },
+];
 const autonomyQueue = [
   {
     id: 'AUTO_PATCH_20240419_142315',
@@ -347,6 +709,7 @@ const state = {
   playbooks: [...playbookTemplates],
   autonomyValidation: 'manual',
   autonomyStep: 'observation',
+  selectedModuleId: autonomyModules.length ? autonomyModules[0].id : null,
   emotionLevel: 48,
   sandboxState: {
     status: 'OK',
@@ -373,6 +736,15 @@ const otaList = document.querySelector('[data-ota-list]');
 const boostRange = document.getElementById('boostRange');
 const boostValue = document.getElementById('boostValue');
 const toast = document.querySelector('[data-toast]');
+
+const moduleCountChip = document.querySelector('[data-module-count]');
+const moduleList = document.querySelector('[data-module-tracker]');
+const moduleDetail = document.querySelector('[data-module-detail]');
+const moduleTitle = document.querySelector('[data-module-title]');
+const moduleObjective = document.querySelector('[data-module-objective]');
+const moduleScope = document.querySelector('[data-module-scope]');
+const moduleStatus = document.querySelector('[data-module-status]');
+const moduleLibraries = document.querySelector('[data-module-libraries]');
 
 const sceneButtons = document.querySelectorAll('[data-scene]');
 const sceneTitle = document.querySelector('[data-scene-title]');
@@ -536,6 +908,103 @@ const renderWatchers = () => {
     `;
     watchersList.appendChild(li);
   });
+};
+
+const updateModuleCount = () => {
+  if (!moduleCountChip) return;
+  const count = autonomyModules.length;
+  moduleCountChip.textContent = `${count} module${count > 1 ? 's' : ''} à intégrer`;
+};
+
+const renderModuleDetail = (module) => {
+  if (!moduleDetail || !module) return;
+  if (moduleTitle) {
+    moduleTitle.textContent = module.title;
+  }
+  if (moduleObjective) {
+    moduleObjective.textContent = module.objective;
+  }
+  if (moduleScope) {
+    moduleScope.textContent = module.scope;
+  }
+  if (moduleStatus) {
+    moduleStatus.textContent = module.status;
+  }
+  if (moduleLibraries) {
+    moduleLibraries.innerHTML = '';
+    if (module.libraries && module.libraries.length) {
+      module.libraries.forEach((library) => {
+        const li = document.createElement('li');
+        const strong = document.createElement('strong');
+        const link = document.createElement('a');
+        link.href = library.url;
+        link.textContent = library.name;
+        link.target = '_blank';
+        link.rel = 'noreferrer noopener';
+        strong.appendChild(link);
+        const description = document.createElement('span');
+        description.textContent = library.description;
+        li.appendChild(strong);
+        li.appendChild(description);
+        moduleLibraries.appendChild(li);
+      });
+    } else {
+      const empty = document.createElement('li');
+      empty.className = 'module-tracker__empty';
+      empty.textContent = 'Aucune bibliothèque recommandée pour le moment.';
+      moduleLibraries.appendChild(empty);
+    }
+  }
+};
+
+const renderModuleList = () => {
+  if (!moduleList) return;
+  moduleList.innerHTML = '';
+  autonomyModules.forEach((module) => {
+    const li = document.createElement('li');
+    li.className = 'module-card';
+    if (module.id === state.selectedModuleId) {
+      li.classList.add('is-active');
+    }
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'module-card__btn';
+    button.dataset.moduleId = module.id;
+    button.setAttribute('aria-pressed', module.id === state.selectedModuleId ? 'true' : 'false');
+    button.innerHTML = `
+      <span class="module-card__title">${module.title}</span>
+      <span class="module-card__objective">${module.objective}</span>
+      <div class="module-card__tags">
+        ${(module.tags || [])
+          .map((tag) => `<span class="chip chip--mini">${tag}</span>`)
+          .join('')}
+      </div>
+    `;
+    button.addEventListener('click', () => {
+      if (module.id !== state.selectedModuleId) {
+        selectModule(module.id);
+      }
+    });
+    li.appendChild(button);
+    moduleList.appendChild(li);
+  });
+};
+
+const selectModule = (moduleId, { silent = false } = {}) => {
+  if (!moduleId) return;
+  const module = autonomyModules.find((item) => item.id === moduleId);
+  if (!module) return;
+  state.selectedModuleId = moduleId;
+  renderModuleList();
+  renderModuleDetail(module);
+  if (!silent) {
+    appendAutonomyLog(
+      `Module stratégique « ${module.title} » ciblé pour cadrage (${module.scope}).`,
+      'info'
+    );
+    setAutonomyStep('proposition');
+    showToast(`Module ${module.title} chargé dans la roadmap autonomie.`);
+  }
 };
 
 const renderAutonomyLogs = () => {
@@ -1186,6 +1655,12 @@ const init = () => {
   renderPlaybooks();
   renderBackups();
   renderWatchers();
+  updateModuleCount();
+  if (state.selectedModuleId) {
+    selectModule(state.selectedModuleId, { silent: true });
+  } else {
+    renderModuleList();
+  }
   renderAutonomyLogs();
   renderQueue();
   updateValidationState();
