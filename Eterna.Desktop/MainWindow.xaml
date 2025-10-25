@@ -1,0 +1,248 @@
+<Window x:Class="Eterna.Desktop.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Eterna.Desktop"
+        xmlns:viewModels="clr-namespace:Eterna.Desktop.ViewModels"
+        mc:Ignorable="d"
+        Title="Eterna 3.1 — Cockpit d'autonomie locale"
+        Width="1400" Height="900"
+        Background="{StaticResource EternaBackground}">
+    <Window.DataContext>
+        <viewModels:MainViewModel />
+    </Window.DataContext>
+
+    <DockPanel>
+        <Border DockPanel.Dock="Left" Width="340" Background="{StaticResource EternaPanel}">
+            <StackPanel>
+                <StackPanel Margin="20" >
+                    <TextBlock Text="Eterna 3.1" FontSize="26" FontWeight="Bold" Foreground="{StaticResource EternaHighlight}" />
+                    <TextBlock Text="Self-Coding & Autonomy" FontSize="16" Foreground="{StaticResource EternaTextSecondary}" />
+                    <Separator Margin="0 16" />
+                    <TextBlock Text="Modules Full Stack Local IA" FontSize="18" FontWeight="SemiBold" Margin="0 0 0 12" />
+                </StackPanel>
+                <ListBox ItemsSource="{Binding ModuleCategories}"
+                         SelectedItem="{Binding SelectedModule}"
+                         Background="{StaticResource EternaPanel}"
+                         BorderThickness="0"
+                         Foreground="{StaticResource EternaTextPrimary}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Border Margin="16 0" Padding="12" CornerRadius="8" Background="{StaticResource EternaPanelAccent}">
+                                <StackPanel>
+                                    <TextBlock Text="{Binding Title}" FontSize="15" FontWeight="SemiBold" />
+                                    <TextBlock Text="{Binding Objective}" FontSize="13" Foreground="{StaticResource EternaTextSecondary}" Margin="0 6 0 0" />
+                                    <StackPanel Orientation="Horizontal" Margin="0 4 0 0" HorizontalAlignment="Left">
+                                        <Border Background="#332FA7A0" Padding="6 2" CornerRadius="4" Margin="0 0 6 0">
+                                            <TextBlock Text="{Binding Priority}" FontSize="12" />
+                                        </Border>
+                                        <Border Background="#3310172A" Padding="6 2" CornerRadius="4">
+                                            <TextBlock Text="{Binding Impact}" FontSize="12" />
+                                        </Border>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </StackPanel>
+        </Border>
+
+        <Grid Margin="24">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <Border Grid.Row="0" Background="#3310172A" BorderBrush="{StaticResource EternaHighlight}" BorderThickness="1" CornerRadius="8" Padding="14" Margin="0 0 0 16">
+                <Border.Style>
+                    <Style TargetType="Border">
+                        <Setter Property="Visibility" Value="Visible" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding StatusBanner}" Value="">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+                <DockPanel>
+                    <TextBlock Text="{Binding StatusBanner}" FontSize="14" />
+                    <Button Content="Effacer" DockPanel.Dock="Right" Command="{Binding ClearBannerCommand}" />
+                </DockPanel>
+            </Border>
+
+            <Border Grid.Row="1" Background="{StaticResource EternaPanel}" Padding="20" CornerRadius="10" Margin="0 0 0 18">
+                <StackPanel>
+                    <TextBlock Text="Protocole d'auto-modification" FontSize="20" FontWeight="SemiBold" Margin="0 0 0 12" />
+                    <TextBlock Text="1. Avant toute modification, création d'un backup complet (code + configuration + mémoire + modèles locaux)." Margin="0 4" />
+                    <TextBlock Text="2. Les modifications non critiques sont appliquées automatiquement avec notification." Margin="0 4" />
+                    <TextBlock Text="3. Les modifications sensibles requièrent une validation vocale ou textuelle." Margin="0 4" />
+                    <TextBlock Text="4. Après application, redémarrage du module puis auto-test de stabilité." Margin="0 4" />
+                    <TextBlock Text="5. En cas d'échec, restauration automatique du dernier backup stable." Margin="0 4" />
+                </StackPanel>
+            </Border>
+
+            <ScrollViewer Grid.Row="2">
+                <StackPanel Orientation="Vertical" Spacing="18">
+                    <Border Background="{StaticResource EternaPanel}" Padding="20" CornerRadius="10">
+                        <StackPanel>
+                            <TextBlock Text="Vue détaillée du module" FontSize="20" FontWeight="SemiBold" />
+                            <TextBlock Text="{Binding SelectedModule.Title}" FontSize="26" FontWeight="Bold" Margin="0 12 0 6" />
+                            <TextBlock Text="{Binding SelectedModule.Objective}" FontSize="16" Foreground="{StaticResource EternaTextSecondary}" />
+                            <StackPanel Orientation="Horizontal" Margin="0 16 0 16" Spacing="10">
+                                <Border Background="#33F0B03D" Padding="10 4" CornerRadius="6">
+                                    <TextBlock Text="{Binding SelectedModule.Priority}" />
+                                </Border>
+                                <Border Background="#332FA7A0" Padding="10 4" CornerRadius="6">
+                                    <TextBlock Text="{Binding SelectedModule.Impact}" />
+                                </Border>
+                            </StackPanel>
+                            <Separator />
+                            <TextBlock Text="Bibliothèques GitHub" FontSize="18" FontWeight="SemiBold" Margin="0 16 0 10" />
+                            <ItemsControl ItemsSource="{Binding SelectedModule.Libraries}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Padding="12" Margin="0 0 0 10" Background="{StaticResource EternaPanelAccent}" CornerRadius="8">
+                                            <StackPanel>
+                                                <TextBlock Text="{Binding Name}" FontSize="16" FontWeight="SemiBold" />
+                                                <TextBlock Text="{Binding Description}" FontSize="14" Foreground="{StaticResource EternaTextSecondary}" />
+                                                <TextBlock Text="{Binding Url}" FontSize="13" Foreground="{StaticResource EternaHighlight}" TextDecorations="Underline" />
+                                            </StackPanel>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </Border>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*" />
+                            <ColumnDefinition Width="1.5*" />
+                        </Grid.ColumnDefinitions>
+                        <Border Background="{StaticResource EternaPanel}" Padding="18" CornerRadius="10" Margin="0 0 12 0">
+                            <StackPanel>
+                                <DockPanel>
+                                    <TextBlock Text="Backups chiffrés" FontSize="18" FontWeight="SemiBold" />
+                                    <Button Content="Créer un backup" Command="{Binding CreateBackupCommand}" DockPanel.Dock="Right" />
+                                </DockPanel>
+                                <ItemsControl ItemsSource="{Binding BackupVault}" Margin="0 12 0 0">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Background="{StaticResource EternaPanelAccent}" CornerRadius="8" Padding="12" Margin="0 0 0 10">
+                                                <StackPanel>
+                                                    <TextBlock Text="{Binding Id}" FontWeight="SemiBold" />
+                                                    <TextBlock Text="{Binding Timestamp, StringFormat='Le {0:dd MMM yyyy à HH\:mm}'}" FontSize="13" Foreground="{StaticResource EternaTextSecondary}" />
+                                                    <TextBlock Text="{Binding Scope}" FontSize="13" />
+                                                    <TextBlock Text="{Binding Notes}" FontSize="13" Foreground="{StaticResource EternaTextSecondary}" />
+                                                </StackPanel>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </Border>
+                        <Border Grid.Column="1" Background="{StaticResource EternaPanel}" Padding="18" CornerRadius="10">
+                            <StackPanel>
+                                <TextBlock Text="Watcher interne" FontSize="18" FontWeight="SemiBold" />
+                                <ItemsControl ItemsSource="{Binding Watchers}" Margin="0 12 0 0">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Background="{StaticResource EternaPanelAccent}" CornerRadius="8" Padding="12" Margin="0 0 0 10">
+                                                <StackPanel>
+                                                    <TextBlock Text="{Binding Path}" FontWeight="SemiBold" />
+                                                    <TextBlock Text="{Binding Purpose}" FontSize="13" Foreground="{StaticResource EternaTextSecondary}" />
+                                                    <TextBlock Text="Mode : {Binding Mode}" FontSize="13" />
+                                                </StackPanel>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.5*" />
+                            <ColumnDefinition Width="1.5*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Border Background="{StaticResource EternaPanel}" Padding="18" CornerRadius="10" Margin="0 0 12 0">
+                            <StackPanel>
+                                <TextBlock Text="Files de changements" FontSize="18" FontWeight="SemiBold" />
+                                <ItemsControl ItemsSource="{Binding ChangeQueue}" Margin="0 12 0 0">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Background="{StaticResource EternaPanelAccent}" CornerRadius="8" Padding="12" Margin="0 0 0 10">
+                                                <StackPanel>
+                                                    <TextBlock Text="{Binding Id}" FontWeight="SemiBold" />
+                                                    <TextBlock Text="{Binding Title}" FontSize="14" />
+                                                    <TextBlock Text="Risque : {Binding RiskLevel}" FontSize="13" Foreground="{StaticResource EternaTextSecondary}" />
+                                                    <TextBlock Text="Statut : {Binding Status}" FontSize="13" />
+                                                    <StackPanel Orientation="Horizontal" Margin="0 8 0 0">
+                                                        <Button Content="Valider" Command="{Binding DataContext.ApproveChangeCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding}" />
+                                                        <Button Content="Rejeter" Command="{Binding DataContext.RejectChangeCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding}" Background="{StaticResource EternaDanger}" />
+                                                    </StackPanel>
+                                                </StackPanel>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </Border>
+                        <Border Grid.Column="1" Background="{StaticResource EternaPanel}" Padding="18" CornerRadius="10" Margin="0 0 12 0">
+                            <StackPanel>
+                                <TextBlock Text="Logs d'autonomie" FontSize="18" FontWeight="SemiBold" />
+                                <ItemsControl ItemsSource="{Binding AutonomyLogs}" Margin="0 12 0 0">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Background="{StaticResource EternaPanelAccent}" CornerRadius="8" Padding="12" Margin="0 0 0 10">
+                                                <StackPanel>
+                                                    <TextBlock Text="{Binding Id}" FontWeight="SemiBold" />
+                                                    <TextBlock Text="{Binding Timestamp, StringFormat='Le {0:dd MMM yyyy à HH\:mm}'}" FontSize="13" Foreground="{StaticResource EternaTextSecondary}" />
+                                                    <TextBlock Text="{Binding Message}" FontSize="13" />
+                                                    <TextBlock Text="État : {Binding Status}" FontSize="13" />
+                                                </StackPanel>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </Border>
+                        <Border Grid.Column="2" Background="{StaticResource EternaPanel}" Padding="18" CornerRadius="10">
+                            <StackPanel>
+                                <TextBlock Text="Adaptation émotionnelle" FontSize="18" FontWeight="SemiBold" />
+                                <ItemsControl ItemsSource="{Binding EmotionProfiles}" Margin="0 12 0 0">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Background="{StaticResource EternaPanelAccent}" CornerRadius="8" Padding="12" Margin="0 0 0 10">
+                                                <StackPanel>
+                                                    <TextBlock Text="{Binding Name}" FontWeight="SemiBold" />
+                                                    <TextBlock Text="{Binding Signal}" FontSize="13" Foreground="{StaticResource EternaTextSecondary}" />
+                                                    <TextBlock Text="{Binding RecommendedAction}" FontSize="13" />
+                                                </StackPanel>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+
+                    <Border Background="{StaticResource EternaPanel}" Padding="20" CornerRadius="10">
+                        <StackPanel>
+                            <TextBlock Text="✅ Objectif global" FontSize="20" FontWeight="SemiBold" Margin="0 0 0 12" />
+                            <TextBlock Text="Avec ces bibliothèques, Eterna devient une IA autonome, émotionnellement adaptative et totalement locale." />
+                            <TextBlock Text="Elle est capable de créer, corriger, publier et apprendre seule tout en conservant une mémoire permanente et un contrôle PC complet." Margin="0 6 0 0" />
+                            <TextBlock Text="La liaison iOS et l'analyse critique visuelle et émotionnelle s'opèrent localement et en sécurité." Margin="0 6 0 0" />
+                            <TextBlock Text="Chaque action sensible est précédée d'un backup automatique et journalisée pour restauration immédiate si nécessaire." Margin="0 6 0 0" />
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+    </DockPanel>
+</Window>
