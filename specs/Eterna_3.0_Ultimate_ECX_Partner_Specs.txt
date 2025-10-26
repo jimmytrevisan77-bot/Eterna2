@@ -1,0 +1,58 @@
+Eterna 3.0 Ultimate ECX Partner – Specification Overview
+========================================================
+
+Vision & Target Users
+---------------------
+- Premium compact workstation for enthusiast creators, AI developers, and boutique gaming lounges.
+- Must impress enterprise partners through a luxury unboxing experience and polished companion software.
+
+Industrial Design
+-----------------
+- Form factor: 12L brushed titanium ECX chassis with anodized crimson accents matching the EternaDream brand palette.
+- Ambient lighting: 4-zone addressable RGB light bars synchronized with thermal and performance profiles.
+- Cooling: Dual-chamber vapor loop with 280 mm top radiator + dedicated VRM copper plate; supports silent and turbo curves.
+
+Core Platform
+-------------
+- CPU: AMD Ryzen 9 9950X (16C/32T, up to 5.8 GHz boost, 170 W TDP).
+- GPU: NVIDIA RTX 5090 Founders Edition with 32 GB GDDR7 and native AV1/Neural Shader support.
+- Memory: 64 GB (2×32 GB) DDR5-6400 ECC-ready.
+- Storage: 2 TB PCIe 5.0 NVMe primary + 4 TB PCIe 4.0 NVMe expansion bay.
+- Chipset: AMD X780E with integrated Wi-Fi 7 and dual 10 GbE.
+
+I/O & Expandability
+-------------------
+- Front I/O: 2× USB4 Type-C (40 Gbps, 100 W PD), 1× combo audio jack, fingerprint scanner with Windows Hello.
+- Rear I/O: 4× USB-A 20 Gbps, 2× USB-A 10 Gbps, dual 10 GbE, 1× 2.5 GbE, HDMI 2.1a, dual DisplayPort 2.1 UHBR20.
+- Expansion: 1× PCIe 5.0 x16 (occupied), 1× M.2 2280 PCIe 5.0, 1× M.2 22110 PCIe 4.0, 1× Oculink for external GPU.
+
+Thermal & Acoustic Targets
+--------------------------
+- Silent mode: <25 dBA idle, <32 dBA sustained load with CPU package <80 °C.
+- Performance mode: maintain GPU <82 °C with ambient 25 °C.
+- Supports liquid metal TIM service kit and automated maintenance reminders.
+
+Power & Electrical
+------------------
+- PSU: 1000 W Titanium-rated SFX-L with zero-RPM mode below 350 W draw.
+- Power monitoring: real-time 1% accuracy shunt metering exposed through partner API.
+- Surge protection: integrated 2 kV transient suppressors with logging.
+
+Software Experience
+-------------------
+- OS: Windows 12 Pro + EternaDream Control Nexus (ECN) companion app.
+- ECN must expose performance profiles, partner branding zones, and AI-assisted support concierge.
+- Supports over-the-air firmware orchestration for BIOS, GPU vBIOS, and lighting controller.
+- Integrates telemetry export (MQTT + REST) for partner monitoring dashboards.
+
+Security & Service
+------------------
+- TPM 2.0 discrete module, encrypted BIOS recovery, physical intrusion sensor with audit trail.
+- Partner portal for RMA automation, service playbooks, and asset tagging.
+- Warranty: 5-year premium with on-site repair in 48 hours for partner accounts.
+
+Key Differentiators
+-------------------
+1. Luxury-tier compact chassis with synchronized ambient lighting and titanium finish.
+2. AI-ready hardware stack optimized for mixed creative workloads and neural rendering.
+3. Enterprise-grade telemetry, automation, and concierge-level support tooling.
