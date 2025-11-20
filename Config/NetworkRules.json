@@ -1,0 +1,9 @@
+{
+  "allowed_hosts": [
+    "huggingface.co",
+    "shopify.com",
+    "printify.com",
+    "etsy.com",
+    "ngrok.io"
+  ]
+}
